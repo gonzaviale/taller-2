@@ -1,14 +1,21 @@
 import dotenv from 'dotenv';
-dotenv.config();
-
-import express, { NextFunction, Request, Response } from 'express';
+import express, { Request, Response, NextFunction } from 'express';
 import cors from 'cors';
 import morgan from 'morgan';
-// import connectDataBase from './config/db';
-// import router from './routes';
+import { syncDatabase } from './config/db';
 import { setupSwagger } from './docs/swagger';
 
-// connectDataBase();
+dotenv.config();
+
+syncDatabase(false)
+  .then(() => {
+    app.listen(PORT, () => {
+      console.log(`Servidor corriendo en el puerto ${PORT}`);
+    });
+  })
+  .catch((error) => {
+    console.error('Error al iniciar el servidor:', error);
+  });
 
 const app = express();
 
