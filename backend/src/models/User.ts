@@ -108,6 +108,9 @@ export class User
   }
 
   public static associate(): void {
-    // User.hasMany(models.Post, { foreignKey: 'userId' });
+    /**
+     * @TODO definir asociaciones cuando se cree la tabla de compras
+     * Por ahora no hay asociaciones definidas
+     */
   }
 }
