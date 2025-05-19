@@ -69,7 +69,10 @@ export const getAllUsersService = async (page: number, limit: number) => {
   }
 };
 
-export const updateUserService = async (id: number, userDTO: UserRequestDTO) => {
+export const updateUserService = async (
+  id: number,
+  userDTO: UserRequestDTO
+) => {
   try {
     // Obtener el usuario por id
     const user = await sequelize.models.User.findByPk(id);
@@ -83,5 +86,19 @@ export const updateUserService = async (id: number, userDTO: UserRequestDTO) => 
     return convertToUserResponseDTO(user);
   } catch (error: any) {
     throw new Error("Error updating user: " + error.message || error);
+  }
+};
+
+export const deleteUserService = async (id: number) => {
+  try {
+    // Obtener el usuario por id
+    const user = await sequelize.models.User.findByPk(id);
+    // Si no existe el usuario, lanzar un error
+    if (!user) throw new Error(`User with id ${id} not found`);
+
+    await user.destroy();
+    return convertToUserResponseDTO(user);
+  } catch (error: any) {
+    throw new Error("Error deleting user: " + error.message || error);
   }
 };
