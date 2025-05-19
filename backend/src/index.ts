@@ -8,15 +8,7 @@ import router from './routes';
 
 dotenv.config();
 
-syncDatabase(false)
-  .then(() => {
-    app.listen(PORT, () => {
-      console.log(`Servidor corriendo en el puerto ${PORT}`);
-    });
-  })
-  .catch((error) => {
-    console.error('Error al iniciar el servidor:', error);
-  });
+syncDatabase(false);
 
 const app = express();
 
