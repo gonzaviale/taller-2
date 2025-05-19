@@ -4,6 +4,7 @@ import cors from 'cors';
 import morgan from 'morgan';
 import { syncDatabase } from './config/db';
 import { setupSwagger } from './docs/swagger';
+import router from './routes';
 
 dotenv.config();
 
@@ -31,7 +32,7 @@ app.use(express.json());
 
 setupSwagger(app);
 
-// app.use('/api', router);
+app.use('/api', router);
 
 app.use(
   (err: Error, req: Request, res: Response, next: NextFunction) => {

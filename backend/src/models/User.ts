@@ -1,4 +1,5 @@
 import { Model, DataTypes, Sequelize } from "sequelize";
+import { hashPassword } from "../utils/cryptoUtils";
 
 interface UserAttributes {
   id: number;
@@ -90,6 +91,18 @@ export class User
         sequelize,
         tableName: "user",
         timestamps: true,
+        hooks: {
+          // Hashea la contraseña antes de crear el usuario
+          beforeCreate: async (user: User) => {
+            user.password = hashPassword(user.password);
+          },
+          // Hashea la contraseña si fue modificada
+          beforeUpdate: async (user: User) => {
+            if (user.changed("password")) {
+              user.password = hashPassword(user.password);
+            }
+          },
+        },
       }
     );
   }
