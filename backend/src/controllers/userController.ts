@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import { UserRequestDTO } from "../types";
 import {
   createUserService,
+  deleteUserService,
   getAllUsersService,
   getUserService,
   updateUserService,
@@ -15,8 +16,8 @@ export const createUserController = async (req: Request, res: Response) => {
     res.status(201).json(newUser);
   } catch (error: any) {
     console.error(error);
-    res.status(400).json({ 
-      message: error.message || error 
+    res.status(400).json({
+      message: error.message || error,
     });
   }
 };
@@ -67,8 +68,21 @@ export const updateUserController = async (req: Request, res: Response) => {
     res.status(200).json(updatedUser);
   } catch (error: any) {
     console.error(error);
-    res.status(400).json({ 
-      message: error.message || error 
+    res.status(400).json({
+      message: error.message || error,
     });
   }
-}
+};
+
+export const deleteUserController = async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params;
+    const deletedUser = await deleteUserService(Number(id));
+    res.status(200).json(deletedUser);
+  } catch (error: any) {
+    console.error(error);
+    res.status(400).json({
+      message: error.message || error,
+    });
+  }
+};
