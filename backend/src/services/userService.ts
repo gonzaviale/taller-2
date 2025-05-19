@@ -52,7 +52,7 @@ export const getAllUsersService = async (page: number, limit: number) => {
     const { count, rows } = await sequelize.models.User.findAndCountAll({
       offset,
       limit,
-      order: [['createdAt', 'DESC']],
+      order: [["createdAt", "DESC"]],
     });
 
     return {
@@ -60,11 +60,28 @@ export const getAllUsersService = async (page: number, limit: number) => {
       users: rows.map((user: any) => convertToUserResponseDTO(user)),
       totalItems: count,
       currentPage: page,
-      totalPages: Math.ceil(count / limit)
+      totalPages: Math.ceil(count / limit),
     };
   } catch (error: any) {
-    console.error("Error in getAllUsersService:", error);
-    throw new Error("Error getting users: " + (error.message || error.toString()));
+    throw new Error(
+      "Error getting users: " + (error.message || error.toString())
+    );
   }
 };
 
+export const updateUserService = async (id: number, userDTO: UserRequestDTO) => {
+  try {
+    // Obtener el usuario por id
+    const user = await sequelize.models.User.findByPk(id);
+    // Si no existe el usuario, lanzar un error
+    if (!user) throw new Error(`User with id ${id} not found`);
+
+    Object.assign(user, userDTO);
+    await user.save();
+
+    // Convertir el usuario a un DTO
+    return convertToUserResponseDTO(user);
+  } catch (error: any) {
+    throw new Error("Error updating user: " + error.message || error);
+  }
+};
