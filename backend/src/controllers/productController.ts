@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { ProductDTO } from "../types";
+import { ProductDTO } from "../types/DTO";
 import {
   createProductService,
   deleteProductService,

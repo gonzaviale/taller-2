@@ -1,5 +1,5 @@
 import { sequelize } from "../config/db";
-import { ProductDTO } from "../types";
+import { ProductDTO } from "../types/DTO";
 import { convertToProductDTO } from "../utils/convertToDTO";
 
 export const createProductService = async (productDTO: ProductDTO) => {
