@@ -1,5 +1,5 @@
 import { sequelize } from "../config/db";
-import { UserRequestDTO, UserResponseDTO } from "../types";
+import { UserRequestDTO, UserResponseDTO } from "../types/DTO";
 import { convertToUserResponseDTO } from "../utils/convertToDTO";
 
 export const createUserService = async (userDTO: UserRequestDTO) => {

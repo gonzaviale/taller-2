@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { UserRequestDTO } from "../types";
+import { UserRequestDTO } from "../types/DTO";
 import {
   createUserService,
   deleteUserService,
