@@ -1,4 +1,4 @@
-import { UserResponseDTO } from "../types";
+import { ProductDTO, UserResponseDTO } from "../types";
 
 export const convertToUserResponseDTO = (user: any): UserResponseDTO => {
     return {
@@ -13,3 +13,18 @@ export const convertToUserResponseDTO = (user: any): UserResponseDTO => {
         updatedAt: user.updatedAt,
     };
 };
+
+export const convertToProductDTO = (product: any): ProductDTO => {
+    return {
+        id: product.id,
+        title: product.title,
+        price: product.price,
+        description: product.description,
+        category: product.category,
+        image: product.image,
+        ratingRate: product.ratingRate,
+        ratingCount: product.ratingCount,
+        createdAt: product.createdAt,
+        updatedAt: product.updatedAt,
+    };
+}; 
