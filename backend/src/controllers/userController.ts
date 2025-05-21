@@ -28,8 +28,7 @@ export const getUserController = async (req: Request, res: Response) => {
     const user = await getUserService(Number(id));
     res.status(200).json(user);
   } catch (error: any) {
-    console.error(error);
-    res.status(400).json({
+    res.status(404).json({
       message: error.message || error,
     });
   }
@@ -77,11 +76,11 @@ export const updateUserController = async (req: Request, res: Response) => {
 export const deleteUserController = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
-    const deletedUser = await deleteUserService(Number(id));
-    res.status(200).json(deletedUser);
+    await deleteUserService(Number(id));
+    res.status(204).send();
   } catch (error: any) {
     console.error(error);
-    res.status(400).json({
+    res.status(404).json({
       message: error.message || error,
     });
   }
