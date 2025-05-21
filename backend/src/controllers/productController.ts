@@ -28,8 +28,7 @@ export const getProductController = async (req: Request, res: Response) => {
     const product = await getProductService(Number(id));
     res.status(200).json(product);
   } catch (error: any) {
-    console.error(error);
-    res.status(400).json({
+    res.status(404).json({
       message: error.message || error,
     });
   }
@@ -77,11 +76,11 @@ export const updateProductController = async (req: Request, res: Response) => {
 export const deleteProductController = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
-    const deletedProduct = await deleteProductService(Number(id));
-    res.status(200).json(deletedProduct);
+    await deleteProductService(Number(id));
+    res.status(204).send();
   } catch (error: any) {
     console.error(error);
-    res.status(400).json({
+    res.status(404).json({
       message: error.message || error,
     });
   }
