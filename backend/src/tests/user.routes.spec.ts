@@ -1,6 +1,6 @@
 import request from "supertest";
 import app from "../app";
-import { sequelize } from "../config/db";
+import { sequelize, syncDatabase } from "../config/db";
 
 describe("User API", () => {
   let createdUserId: string;
@@ -21,6 +21,10 @@ describe("User API", () => {
     lastName: "Doe",
     address: "456 Elm St",
   };
+
+  beforeAll(async () => {
+    await syncDatabase(true);
+  });
 
   // CREATE
   it("should create a new user", async () => {

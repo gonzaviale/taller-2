@@ -1,15 +1,19 @@
 import { Sequelize } from 'sequelize';
 import { User } from '../models/User';
-import dotenv from 'dotenv';
 import { Product } from '../models/Product';
+import dotenv from 'dotenv';
 import axios from 'axios';
 
 dotenv.config();
 
-const DB_NAME = process.env.DB_NAME || 'taller2';
-const DB_USER = process.env.DB_USER || 'root';
-const DB_PASS = process.env.DB_PASS || '';
-const DB_HOST = process.env.DB_HOST || 'localhost';
+const isTest = process.env.NODE_ENV === 'test';
+
+const DB_NAME = isTest ? process.env.TEST_DB_NAME || 'taller2_test' : process.env.DB_NAME || 'taller2';
+const DB_USER = isTest ? process.env.TEST_DB_USER || 'root' : process.env.DB_USER || 'root';
+const DB_PASS = isTest ? process.env.TEST_DB_PASS || '' : process.env.DB_PASS || '';
+const DB_HOST = isTest ? process.env.TEST_DB_HOST || 'localhost' : process.env.DB_HOST || 'localhost';
+const DB_DIALECT = isTest ? 'sqlite' : 'mysql';
+const DB_STORAGE = isTest ? ':memory:' : undefined;
 
 // Configuración de la conexión a la base de datos
 const sequelize = new Sequelize(
@@ -17,9 +21,10 @@ const sequelize = new Sequelize(
   DB_USER,
   DB_PASS,
   {
-    host: DB_HOST || 'localhost',
-    dialect: 'mysql', 
-    logging: false,
+    host: DB_HOST,
+    dialect: DB_DIALECT as any,
+    storage: DB_STORAGE,
+    logging: !isTest,
     pool: {
       max: 5,
       min: 0,
@@ -42,22 +47,21 @@ export const syncDatabase = async (force: boolean = false): Promise<void> => {
   try {
     await sequelize.sync({ force });
     console.log('Base de datos sincronizada correctamente');
-    // Cargar la base de datos con productos por defecto
-    await loadDatabase();
+    if (!isTest) {
+      await loadDatabase();
+    }
   } catch (error) {
     console.error('Error al sincronizar la base de datos:', error);
     throw error;
   }
 };
 
-// Función para cargar la base de datos con productos en caso de que no existan
+// Función para cargar productos por defecto (solo para desarrollo/producción)
 export const loadDatabase = async (): Promise<void> => {
   try {
     const count = await Product.count();
     if (count === 0) {
-      // Cargar productos por defecto
       const products = await axios.get('https://fakestoreapi.com/products').then(response => response.data);
-      // Mapear los productos a la estructura del modelo Product
       const productsToInsert = products.map((product: any) => ({
         title: product.title,
         price: product.price,
@@ -69,7 +73,6 @@ export const loadDatabase = async (): Promise<void> => {
         createdAt: new Date(),
         updatedAt: new Date()
       }));
-      // Insertar los productos en la base de datos
       await Product.bulkCreate(productsToInsert);
       console.log('Base de datos cargada con productos por defecto');
     } else {
@@ -79,6 +82,6 @@ export const loadDatabase = async (): Promise<void> => {
     console.error('Error al cargar la base de datos:', error);
     throw error;
   }
-}
+};
 
 export { sequelize, User, Product };
