@@ -24,7 +24,7 @@ const sequelize = new Sequelize(
     host: DB_HOST,
     dialect: DB_DIALECT as any,
     storage: DB_STORAGE,
-    logging: !isTest,
+    logging: false,
     pool: {
       max: 5,
       min: 0,
