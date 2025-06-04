@@ -1,9 +1,9 @@
 import { Component } from '@angular/core';
-import { NavComponent } from '../nav/nav.component';
 
+import { RouterOutlet } from '@angular/router';
 @Component({
   selector: 'app-home',
-  imports: [NavComponent],
+  imports: [RouterOutlet],
   templateUrl: './home.component.html',
   styleUrl: './home.component.css'
 })

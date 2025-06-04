@@ -1,6 +1,6 @@
 <nav class="bg-gray-800 text-white px-6 py-3 flex justify-between items-center shadow-md">
   <!-- Logo / Home -->
-  <a routerLink="/home" class="text-lg font-semibold hover:text-gray-300">
+  <a routerLink="/" class="text-lg font-semibold hover:text-gray-300">
     Home
   </a>
 
@@ -10,9 +10,6 @@
     <ng-container *ngIf="!isLoggedIn">
       <a routerLink="/login" class="hover:text-gray-300">
         Iniciar sesión
-      </a>
-      <a routerLink="/register" class="hover:text-gray-300">
-        Registrarse
       </a>
     </ng-container>
 
@@ -24,11 +21,15 @@
       <a routerLink="/logout" class="hover:text-gray-300">
         Cerrar sesión
       </a>
-    </ng-container>
-
-    <!-- Carrito siempre visible -->
-    <a routerLink="/carrito" class="hover:text-gray-300">
+       <a routerLink="/carrito" class="hover:text-gray-300">
       Ver carrito
     </a>
+    </ng-container>
+
+   
+
   </div>
+
 </nav>
+
+ <app-home></app-home>

@@ -1,10 +1,10 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
-import { NavComponent } from '../nav/nav.component';
+
 
 @Component({
   selector: 'app-login',
-  imports: [NavComponent],
+  imports: [],
   templateUrl: './login.component.html',
   styleUrl: './login.component.css'
 })
