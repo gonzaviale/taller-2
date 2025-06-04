@@ -1,0 +1,40 @@
+<nav class="bg-gray-800 text-white px-6 py-3 flex justify-between items-center shadow-md">
+  <!-- Logo / Home -->
+  <a  [routerLink]="['/products/list-products']" class="text-lg font-semibold hover:text-gray-300">
+    Home
+  </a>
+
+
+  <!-- Enlaces a la derecha -->
+  <div class="flex gap-4">
+    <!-- Si NO está logueado -->
+    <ng-container *ngIf="!isLoggedIn">
+      <a routerLink="/login" class="hover:text-gray-300">
+        Iniciar sesión
+      </a>
+    </ng-container>
+
+    <!-- Si está logueado -->
+    <ng-container *ngIf="isLoggedIn">
+      <a routerLink="/perfil" class="hover:text-gray-300">
+        Perfil
+      </a>
+      <a routerLink="/logout" class="hover:text-gray-300">
+        Cerrar sesión
+      </a>
+       <a routerLink="/carrito" class="hover:text-gray-300">
+      Ver carrito
+    </a>
+    </ng-container>
+
+   
+
+  </div>
+
+</nav>
+
+
+
+
+ <app-home></app-home>
+
