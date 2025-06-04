@@ -17,11 +17,11 @@ export const routes: Routes = [
         component : CreateProductComponent
     } ,
     {
-        path:'list-prducts',
+        path:'list-products',
         component : ListProductsComponent
     } ,
     {
-        path:'detail-prduct',
+        path:'detail-product',
         component : DetailProductComponent
     } ,
 
