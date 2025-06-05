@@ -10,3 +10,10 @@ export interface ProductDTO {
     createdAt?: Date;
     updatedAt?: Date;
 }
+
+export interface ProductsResponse {
+  products: ProductDTO[];
+  totalItems: number;
+  currentPage: number;
+  totalPages: number;
+}

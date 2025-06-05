@@ -1,1 +1,239 @@
-<p>list-products works!</p>
+<!-- Hero Section -->
+<section
+    class="relative overflow-hidden bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 text-white py-20 mb-8">
+    <div class="absolute inset-0 bg-black/10"></div>
+    <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+        <h1 class="text-5xl md:text-6xl font-bold mb-6 animate-pulse">
+            Descubre Productos
+            <span class="bg-gradient-to-r from-yellow-400 to-orange-400 bg-clip-text text-transparent">Increíbles</span>
+        </h1>
+        <p class="text-xl md:text-2xl mb-8 opacity-90">
+            La mejor selección de productos con ofertas exclusivas
+        </p>
+    </div>
+    <div class="absolute bottom-0 left-0 right-0 h-20 bg-gradient-to-t from-gray-50 to-transparent"></div>
+</section>
+
+<!-- Products Section -->
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <!-- Section Header -->
+    <div class="text-center mb-12">
+        <h2 class="text-4xl font-bold text-gray-900 mb-4">
+            Nuestros <span class="text-blue-600">Productos</span>
+        </h2>
+        <p class="text-gray-600 text-lg max-w-2xl mx-auto">
+            Explora nuestra increíble colección de productos cuidadosamente seleccionados
+        </p>
+    </div>
+
+    <!-- Filters and Search Section -->
+    <div class="bg-white rounded-2xl shadow-xl p-6 mb-8 border border-gray-100">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            <!-- Search Bar -->
+            <div class="lg:col-span-2">
+                <div class="relative">
+                    <input type="text" [(ngModel)]="searchTerm" (input)="onSearch()" placeholder="Buscar productos..."
+                        class="w-full pl-12 pr-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200">
+                    <div class="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400">
+                        🔍
+                    </div>
+                </div>
+            </div>
+
+            <!-- Category Filter -->
+            <div>
+                <select [(ngModel)]="selectedCategory" (change)="onCategoryChange()"
+                    class="w-full py-3 px-4 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200">
+                    <option value="">Todas las categorías</option>
+                    <option *ngFor="let category of categories" [value]="category">
+                        {{ getCategoryDisplayName(category) }}
+                    </option>
+                </select>
+            </div>
+
+            <!-- Price Range Filter -->
+            <div>
+                <select [(ngModel)]="selectedPriceRange" (change)="onPriceRangeChange()"
+                    class="w-full py-3 px-4 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200">
+                    <option value="">Todos los precios</option>
+                    <option value="0-50">$0 - $50</option>
+                    <option value="50-100">$50 - $100</option>
+                    <option value="100-500">$100 - $500</option>
+                    <option value="500+">$500+</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- Sort Options and View Toggle -->
+        <div class="flex flex-wrap items-center justify-between mt-6 pt-6 border-t border-gray-200">
+            <div class="flex items-center space-x-4">
+                <span class="text-gray-700 font-medium">Ordenar por:</span>
+                <select [(ngModel)]="sortBy" (change)="onSortChange()"
+                    class="py-2 px-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                    <option value="default">Por defecto</option>
+                    <option value="price-asc">Precio: Menor a Mayor</option>
+                    <option value="price-desc">Precio: Mayor a Menor</option>
+                    <option value="rating">Mejor Valorados</option>
+                    <option value="name">Nombre A-Z</option>
+                </select>
+            </div>
+
+            <div class="flex items-center space-x-4">
+                <span class="text-sm text-gray-600">
+                    Mostrando {{ filteredProducts.length }} de {{ products.length }} productos
+                </span>
+                <div class="flex items-center space-x-2">
+                    <button (click)="setViewMode('grid')"
+                        [class]="viewMode === 'grid' ? 'p-2 rounded-lg bg-blue-100 text-blue-600' : 'p-2 rounded-lg text-gray-400 hover:text-gray-600'"
+                        class="transition-colors duration-200">
+                        ⊞
+                    </button>
+                    <button (click)="setViewMode('list')"
+                        [class]="viewMode === 'list' ? 'p-2 rounded-lg bg-blue-100 text-blue-600' : 'p-2 rounded-lg text-gray-400 hover:text-gray-600'"
+                        class="transition-colors duration-200">
+                        ☰
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Loading State -->
+    <div *ngIf="isLoading" class="text-center py-16">
+        <div class="inline-block animate-spin rounded-full h-12 w-12 border-4 border-blue-500 border-t-transparent">
+        </div>
+        <p class="mt-4 text-gray-600">Cargando productos increíbles...</p>
+    </div>
+
+    <!-- No Results State -->
+    <div *ngIf="!isLoading && filteredProducts.length === 0 && products.length > 0" class="text-center py-16">
+        <div class="text-6xl mb-4">🔍</div>
+        <h3 class="text-2xl font-bold text-gray-900 mb-2">No se encontraron productos</h3>
+        <p class="text-gray-600 mb-4">Intenta con otros términos de búsqueda o filtros</p>
+        <button (click)="clearFilters()"
+            class="bg-blue-600 text-white px-6 py-2 rounded-full hover:bg-blue-700 transition-colors duration-200">
+            Limpiar Filtros
+        </button>
+    </div>
+
+    <!-- Empty State (No products at all) -->
+    <div *ngIf="!isLoading && products.length === 0" class="text-center py-16">
+        <div class="text-6xl mb-4">📦</div>
+        <h3 class="text-2xl font-bold text-gray-900 mb-2">No hay productos disponibles</h3>
+        <p class="text-gray-600">Los productos se cargarán pronto</p>
+    </div>
+
+    <!-- Products Grid View -->
+    <div *ngIf="!isLoading && filteredProducts.length > 0 && viewMode === 'grid'"
+        class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+        <div *ngFor="let product of filteredProducts; trackBy: trackByProductId"
+            class="bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:scale-105 overflow-hidden group border border-gray-100">
+            <div class="relative overflow-hidden">
+                <img [src]="product.image" [alt]="product.title"
+                    class="w-full h-64 object-cover group-hover:scale-110 transition-transform duration-500"
+                    (error)="onImageError($event)">
+                <div
+                    class="absolute top-4 right-4 bg-gradient-to-r from-blue-600 to-purple-600 text-white px-3 py-1 rounded-full text-sm font-semibold">
+                    {{ getCategoryIcon(product.category) }}
+                </div>
+                <div *ngIf="product.ratingRate && product.ratingRate > 4.5"
+                    class="absolute top-4 left-4 bg-yellow-500 text-white px-2 py-1 rounded-full text-xs font-bold">
+                    ⭐ TOP
+                </div>
+            </div>
+
+            <div class="p-6">
+                <div class="flex items-start justify-between mb-2">
+                    <h3
+                        class="text-lg font-bold text-gray-900 line-clamp-2 group-hover:text-blue-600 transition-colors duration-200">
+                        {{ product.title }}
+                    </h3>
+                </div>
+
+                <p class="text-gray-600 text-sm mb-4 line-clamp-2">
+                    {{ product.description }}
+                </p>
+
+                <div class="flex items-center justify-between mb-4">
+                    <div class="flex items-center space-x-2">
+                        <div *ngIf="product.ratingRate" class="flex items-center">
+                            <span class="text-yellow-500">{{ getStars(product.ratingRate) }}</span>
+                            <span class="text-sm text-gray-500 ml-1">({{ product.ratingCount || 0 }})</span>
+                        </div>
+                    </div>
+                    <span class="text-sm text-gray-500 bg-gray-100 px-2 py-1 rounded-full">
+                        {{ getCategoryDisplayName(product.category) }}
+                    </span>
+                </div>
+
+                <div class="flex items-center justify-between">
+                    <div class="text-2xl font-bold text-blue-600">
+                        ${{ product.price | number:'1.2-2' }}
+                    </div>
+                    <button (click)="addToCart(product)"
+                        class="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-4 py-2 rounded-xl hover:shadow-lg transition-all duration-300 transform hover:scale-105 font-medium">
+                        🛒 Agregar
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Products List View -->
+    <div *ngIf="!isLoading && filteredProducts.length > 0 && viewMode === 'list'" class="space-y-6">
+        <div *ngFor="let product of filteredProducts; trackBy: trackByProductId"
+            class="bg-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden border border-gray-100">
+            <div class="flex flex-col md:flex-row">
+                <div class="md:w-1/4 relative">
+                    <img [src]="product.image" [alt]="product.title" class="w-full h-48 md:h-full object-cover"
+                        (error)="onImageError($event)">
+                    <div
+                        class="absolute top-4 right-4 bg-gradient-to-r from-blue-600 to-purple-600 text-white px-3 py-1 rounded-full text-sm font-semibold">
+                        {{ getCategoryIcon(product.category) }}
+                    </div>
+                </div>
+
+                <div class="md:w-3/4 p-6 flex flex-col justify-between">
+                    <div>
+                        <div class="flex items-start justify-between mb-2">
+                            <h3
+                                class="text-xl font-bold text-gray-900 hover:text-blue-600 transition-colors duration-200">
+                                {{ product.title }}
+                            </h3>
+                            <span class="text-sm text-gray-500 bg-gray-100 px-3 py-1 rounded-full ml-4">
+                                {{ getCategoryDisplayName(product.category) }}
+                            </span>
+                        </div>
+
+                        <p class="text-gray-600 mb-4">
+                            {{ product.description }}
+                        </p>
+
+                        <div *ngIf="product.ratingRate" class="flex items-center mb-4">
+                            <span class="text-yellow-500 mr-2">{{ getStars(product.ratingRate) }}</span>
+                            <span class="text-sm text-gray-500">
+                                {{ product.ratingRate }}/5 ({{ product.ratingCount || 0 }} reseñas)
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="flex items-center justify-between">
+                        <div class="text-3xl font-bold text-blue-600">
+                            ${{ product.price | number:'1.2-2' }}
+                        </div>
+                        <button (click)="addToCart(product)"
+                            class="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-6 py-3 rounded-xl hover:shadow-lg transition-all duration-300 transform hover:scale-105 font-medium">
+                            🛒 Agregar al Carrito
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Success/Error Messages -->
+<div *ngIf="showMessage"
+    [class]="messageType === 'success' ? 'fixed bottom-4 right-4 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg z-50 animate-pulse' : 'fixed bottom-4 right-4 bg-red-500 text-white px-6 py-3 rounded-lg shadow-lg z-50 animate-pulse'">
+    {{ message }}
+</div>
