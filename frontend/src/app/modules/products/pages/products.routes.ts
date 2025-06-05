@@ -12,14 +12,17 @@ export const routes: Routes = [
                 component: CreateProductComponent
             },
             {
-                path: 'list-products',
+                path: '',
                 component: ListProductsComponent
             },
             {
                 path: 'detail-product',
                 component: DetailProductComponent
             },
-
+            {
+                path: '**',
+                redirectTo: ''
+            }
         ]
 
     }
