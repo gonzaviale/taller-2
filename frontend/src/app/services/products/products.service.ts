@@ -2,7 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { environment } from '../../../environments/environment.development';
 import { Observable } from 'rxjs';
-import { ProductDTO } from '../../../types/ProductDTO';
+import { ProductDTO, ProductsResponse } from '../../../types/ProductDTO';
 
 @Injectable({
   providedIn: 'root'
@@ -14,8 +14,8 @@ export class ProductsService {
   http = inject(HttpClient);
   apiUrl = environment.api_url;
 
-  getProducts(): Observable<ProductDTO> {
-    return this.http.get<ProductDTO>(`${this.apiUrl}/product`);
+  getProducts(): Observable<ProductsResponse> {
+    return this.http.get<ProductsResponse>(`${this.apiUrl}/product`);
   }
   getProductById(id: string): Observable<ProductDTO> {
     return this.http.get<ProductDTO>(`${this.apiUrl}/product/${id}`);
