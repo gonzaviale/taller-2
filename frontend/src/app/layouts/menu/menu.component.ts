@@ -10,6 +10,6 @@ import { CommonModule } from '@angular/common'
   styleUrls: ['./menu.component.css']
 })
 export class MenuComponent {
-  isLoggedIn = false;
+  isLoggedIn = true;
 }
 

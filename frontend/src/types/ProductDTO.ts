@@ -17,3 +17,7 @@ export interface ProductsResponse {
   currentPage: number;
   totalPages: number;
 }
+
+export interface ProductoCarrito extends ProductDTO{
+   quantity: number;
+}
