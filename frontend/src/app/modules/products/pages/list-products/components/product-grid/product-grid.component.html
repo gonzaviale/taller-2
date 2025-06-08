@@ -1,0 +1,58 @@
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+    @for (product of products; track trackByProductId($index, product)) {
+    <div
+        class="bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:scale-105 overflow-hidden group border border-gray-100">
+        <div class="relative overflow-hidden">
+            <img [src]="product.image" [alt]="product.title"
+                class="w-full h-64 object-cover group-hover:scale-110 transition-transform duration-500"
+                (error)="onImageError($event)">
+            <div
+                class="absolute top-4 right-4 bg-gradient-to-r from-blue-600 to-purple-600 text-white px-3 py-1 rounded-full text-sm font-semibold">
+                {{ getCategoryIcon(product.category) }}
+            </div>
+            @if (product.ratingRate && product.ratingRate > 4.5) {
+            <div class="absolute top-4 left-4 bg-yellow-500 text-white px-2 py-1 rounded-full text-xs font-bold">
+                ⭐ TOP
+            </div>
+            }
+        </div>
+
+        <div class="p-6">
+            <div class="flex items-start justify-between mb-2">
+                <h3
+                    class="text-lg font-bold text-gray-900 line-clamp-2 group-hover:text-blue-600 transition-colors duration-200">
+                    {{ product.title }}
+                </h3>
+            </div>
+
+            <p class="text-gray-600 text-sm mb-4 line-clamp-2">
+                {{ product.description }}
+            </p>
+
+            <div class="flex items-center justify-between mb-4">
+                <div class="flex items-center space-x-2">
+                    @if (product.ratingRate) {
+                    <div class="flex items-center">
+                        <span class="text-yellow-500">{{ getStars(product.ratingRate) }}</span>
+                        <span class="text-sm text-gray-500 ml-1">({{ product.ratingCount || 0 }})</span>
+                    </div>
+                    }
+                </div>
+                <span class="text-sm text-gray-500 bg-gray-100 px-2 py-1 rounded-full">
+                    {{ getCategoryDisplayName(product.category) }}
+                </span>
+            </div>
+
+            <div class="flex items-center justify-between">
+                <div class="text-2xl font-bold text-blue-600">
+                    ${{ product.price | number:'1.2-2' }}
+                </div>
+                <button (click)="onAddToCart(product)"
+                    class="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-4 py-2 rounded-xl hover:shadow-lg transition-all duration-300 transform hover:scale-105 font-medium">
+                    🛒 Agregar
+                </button>
+            </div>
+        </div>
+    </div>
+    }
+</div>

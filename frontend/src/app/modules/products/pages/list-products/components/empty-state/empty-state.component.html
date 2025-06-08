@@ -1,0 +1,21 @@
+<!-- No Results State -->
+@if (type === 'no-results') {
+<div class="text-center py-16">
+    <div class="text-6xl mb-4">🔍</div>
+    <h3 class="text-2xl font-bold text-gray-900 mb-2">No se encontraron productos</h3>
+    <p class="text-gray-600 mb-4">Intenta con otros términos de búsqueda o filtros</p>
+    <button (click)="onClearFilters()"
+        class="bg-blue-600 text-white px-6 py-2 rounded-full hover:bg-blue-700 transition-colors duration-200">
+        Limpiar Filtros
+    </button>
+</div>
+}
+
+<!-- Empty State (No products at all) -->
+@if (type === 'no-products') {
+<div class="text-center py-16">
+    <div class="text-6xl mb-4">📦</div>
+    <h3 class="text-2xl font-bold text-gray-900 mb-2">No hay productos disponibles</h3>
+    <p class="text-gray-600">Los productos se cargarán pronto</p>
+</div>
+}

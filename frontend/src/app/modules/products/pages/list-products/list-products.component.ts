@@ -3,11 +3,33 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ProductDTO, ProductsResponse } from '../../../../../types/ProductDTO';
 import { ProductsService } from '../../../../services/products/products.service';
+import { ProductFiltersComponent } from './components/product-filters/product-filters.component';
+import { ProductGridComponent } from './components/product-grid/product-grid.component';
+import { ProductListComponent } from './components/product-list/product-list.component';
+import { LoadingStateComponent } from './components/loading-state/loading-state.component';
+import { EmptyStateComponent } from './components/empty-state/empty-state.component';
+import { MessageNotificationComponent } from './components/message-notification/message-notification.component';
+
+export interface FilterState {
+  searchTerm: string;
+  selectedCategory: string;
+  selectedPriceRange: string;
+  sortBy: string;
+}
 
 @Component({
   selector: 'app-list-products',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [
+    CommonModule,
+    FormsModule,
+    ProductFiltersComponent,
+    ProductGridComponent,
+    ProductListComponent,
+    LoadingStateComponent,
+    EmptyStateComponent,
+    MessageNotificationComponent
+  ],
   templateUrl: './list-products.component.html',
   styleUrl: './list-products.component.css'
 })
@@ -16,12 +38,14 @@ export class ListProductsComponent implements OnInit {
   filteredProducts: ProductDTO[] = [];
   categories: string[] = [];
 
-  searchTerm: string = '';
-  selectedCategory: string = '';
-  selectedPriceRange: string = '';
-  sortBy: string = 'default';
-  viewMode: 'grid' | 'list' = 'grid';
+  filterState: FilterState = {
+    searchTerm: '',
+    selectedCategory: '',
+    selectedPriceRange: '',
+    sortBy: 'default'
+  };
 
+  viewMode: 'grid' | 'list' = 'grid';
   isLoading: boolean = true;
   showMessage: boolean = false;
   message: string = '';
@@ -55,27 +79,31 @@ export class ListProductsComponent implements OnInit {
     this.categories = uniqueCategories.filter(Boolean);
   }
 
-  onSearch(): void {
+  onFiltersChange(filters: FilterState): void {
+    this.filterState = { ...filters };
     this.applyFilters();
   }
 
-  onCategoryChange(): void {
-    this.applyFilters();
+  onViewModeChange(mode: 'grid' | 'list'): void {
+    this.viewMode = mode;
   }
 
-  onPriceRangeChange(): void {
+  onClearFilters(): void {
+    this.filterState = {
+      searchTerm: '',
+      selectedCategory: '',
+      selectedPriceRange: '',
+      sortBy: 'default'
+    };
     this.applyFilters();
-  }
-
-  onSortChange(): void {
-    this.applyFilters();
+    this.showMessageToUser('Filtros limpiados', 'success');
   }
 
   private applyFilters(): void {
     let filtered = [...this.products];
 
-    if (this.searchTerm.trim()) {
-      const searchLower = this.searchTerm.toLowerCase();
+    if (this.filterState.searchTerm.trim()) {
+      const searchLower = this.filterState.searchTerm.toLowerCase();
       filtered = filtered.filter(product =>
         product.title.toLowerCase().includes(searchLower) ||
         product.description.toLowerCase().includes(searchLower) ||
@@ -83,21 +111,20 @@ export class ListProductsComponent implements OnInit {
       );
     }
 
-    if (this.selectedCategory) {
-      filtered = filtered.filter(product => product.category === this.selectedCategory);
+    if (this.filterState.selectedCategory) {
+      filtered = filtered.filter(product => product.category === this.filterState.selectedCategory);
     }
 
-    if (this.selectedPriceRange) {
+    if (this.filterState.selectedPriceRange) {
       filtered = this.applyPriceFilter(filtered);
     }
 
     filtered = this.applySorting(filtered);
-
     this.filteredProducts = filtered;
   }
 
   private applyPriceFilter(products: ProductDTO[]): ProductDTO[] {
-    switch (this.selectedPriceRange) {
+    switch (this.filterState.selectedPriceRange) {
       case '0-50':
         return products.filter(p => p.price <= 50);
       case '50-100':
@@ -112,7 +139,7 @@ export class ListProductsComponent implements OnInit {
   }
 
   private applySorting(products: ProductDTO[]): ProductDTO[] {
-    switch (this.sortBy) {
+    switch (this.filterState.sortBy) {
       case 'price-asc':
         return products.sort((a, b) => a.price - b.price);
       case 'price-desc':
@@ -126,50 +153,7 @@ export class ListProductsComponent implements OnInit {
     }
   }
 
-  clearFilters(): void {
-    this.searchTerm = '';
-    this.selectedCategory = '';
-    this.selectedPriceRange = '';
-    this.sortBy = 'default';
-    this.applyFilters();
-    this.showMessageToUser('Filtros limpiados', 'success');
-  }
-
-  setViewMode(mode: 'grid' | 'list'): void {
-    this.viewMode = mode;
-  }
-
-  getCategoryDisplayName(category: string): string {
-    const categoryMap: { [key: string]: string } = {
-      'electronics': 'Electrónicos',
-      'jewelery': 'Joyería',
-      "men's clothing": 'Ropa Hombre',
-      "women's clothing": 'Ropa Mujer'
-    };
-    return categoryMap[category] || category;
-  }
-
-  getCategoryIcon(category: string): string {
-    const iconMap: { [key: string]: string } = {
-      'electronics': '📱',
-      'jewelery': '💎',
-      "men's clothing": '👔',
-      "women's clothing": '👗'
-    };
-    return iconMap[category] || '🏷️';
-  }
-
-  getStars(rating: number): string {
-    const fullStars = Math.floor(rating);
-    const hasHalfStar = rating % 1 >= 0.5;
-    return '⭐'.repeat(fullStars) + (hasHalfStar ? '⭐' : '');
-  }
-
-  onImageError(event: any): void {
-    event.target.src = 'https://images.unsplash.com/photo-1560472354-b33ff0c44a43?w=400';
-  }
-
-  addToCart(product: ProductDTO): void {
+  onAddToCart(product: ProductDTO): void {
     console.log('Adding to cart:', product);
     this.showMessageToUser(`${product.title} agregado al carrito`, 'success');
   }
@@ -182,9 +166,5 @@ export class ListProductsComponent implements OnInit {
     setTimeout(() => {
       this.showMessage = false;
     }, 3000);
-  }
-
-  trackByProductId(index: number, product: ProductDTO): number {
-    return product.id || index;
   }
 }
