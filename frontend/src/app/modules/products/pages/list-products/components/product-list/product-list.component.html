@@ -1,10 +1,11 @@
 <div class="space-y-6">
     @for (product of products; track trackByProductId($index, product)) {
     <div
-        class="bg-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden border border-gray-100">
+        class="bg-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden border border-gray-100 cursor-pointer group"
+        (click)="onProductClick(product)">
         <div class="flex flex-col md:flex-row">
             <div class="md:w-1/4 relative">
-                <img [src]="product.image" [alt]="product.title" class="w-full h-48 md:h-full object-cover"
+                <img [src]="product.image" [alt]="product.title" class="w-full h-48 md:h-full object-cover group-hover:scale-105 transition-transform duration-300"
                     (error)="onImageError($event)">
                 <div
                     class="absolute top-4 right-4 bg-gradient-to-r from-blue-600 to-purple-600 text-white px-3 py-1 rounded-full text-sm font-semibold">
@@ -15,7 +16,7 @@
             <div class="md:w-3/4 p-6 flex flex-col justify-between">
                 <div>
                     <div class="flex items-start justify-between mb-2">
-                        <h3 class="text-xl font-bold text-gray-900 hover:text-blue-600 transition-colors duration-200">
+                        <h3 class="text-xl font-bold text-gray-900 group-hover:text-blue-600 transition-colors duration-200">
                             {{ product.title }}
                         </h3>
                         <span class="text-sm text-gray-500 bg-gray-100 px-3 py-1 rounded-full ml-4">
@@ -41,10 +42,18 @@
                     <div class="text-3xl font-bold text-blue-600">
                         ${{ product.price | number:'1.2-2' }}
                     </div>
-                    <button (click)="onAddToCart(product)"
-                        class="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-6 py-3 rounded-xl hover:shadow-lg transition-all duration-300 transform hover:scale-105 font-medium">
-                        🛒 Agregar al Carrito
-                    </button>
+                    <div class="flex gap-3">
+                        <button 
+                            (click)="onViewDetails(product, $event)"
+                            class="bg-gray-100 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-200 transition-all duration-300 font-medium">
+                            👁️ Ver Detalles
+                        </button>
+                        <button 
+                            (click)="onAddToCart(product, $event)"
+                            class="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-6 py-3 rounded-xl hover:shadow-lg transition-all duration-300 transform hover:scale-105 font-medium">
+                            🛒 Agregar al Carrito
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>

@@ -1,7 +1,8 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, EventEmitter, inject, Input, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ProductDTO } from '../../../../../../../types/ProductDTO';
 import { ProductUtils } from '../shared/product.utils';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-product-grid',
@@ -12,6 +13,7 @@ import { ProductUtils } from '../shared/product.utils';
 export class ProductGridComponent {
   @Input() products: ProductDTO[] = [];
   @Output() addToCart = new EventEmitter<ProductDTO>();
+  private router = inject(Router);
 
   onAddToCart(product: ProductDTO): void {
     this.addToCart.emit(product);
@@ -27,6 +29,16 @@ export class ProductGridComponent {
 
   getStars(rating: number): string {
     return ProductUtils.getStars(rating);
+  }
+
+  onProductClick(product: ProductDTO) {
+    this.router.navigate(['/detail-product', product.id]);
+  }
+
+
+  onViewDetails(product: ProductDTO, event: Event) {
+    event.stopPropagation();
+    this.router.navigate(['/detail-product', product.id]);
   }
 
   onImageError(event: Event): void {
