@@ -1,7 +1,8 @@
 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
     @for (product of products; track trackByProductId($index, product)) {
     <div
-        class="bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:scale-105 overflow-hidden group border border-gray-100">
+        class="bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:scale-105 overflow-hidden group border border-gray-100 cursor-pointer group"
+        (click)="onProductClick(product)">
         <div class="relative overflow-hidden">
             <img [src]="product.image" [alt]="product.title"
                 class="w-full h-64 object-cover group-hover:scale-110 transition-transform duration-500"
