@@ -107,7 +107,7 @@ export class User
     );
   }
 
-  public static associate(): void {
+  public static associate(Model : any): void {
     /**
      * @TODO definir asociaciones cuando se cree la tabla de compras
      * Por ahora no hay asociaciones definidas
