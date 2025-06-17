@@ -4,6 +4,7 @@ import { MenuComponent } from '../../layouts/menu/menu.component';
 import { CommonModule } from '@angular/common';
 import { CarritoService} from '../../services/carrito/carrito.service';
 import { ProductDTO,ProductoCarrito} from '../../../types/ProductDTO';
+import { ProductUtils } from '../../modules/products/pages/list-products/components/shared/product.utils'; 
 
 @Component({
   selector: 'app-shopping-cart',
@@ -44,31 +45,20 @@ export class ShoppingCartComponent implements OnInit{
   }
 
   obtenerEstrellas(valor: number): string {
-    const estrellasLlenas = '★'.repeat(Math.floor(valor));
-    const estrellasVacias = '☆'.repeat(5 - Math.floor(valor));
-    return estrellasLlenas + estrellasVacias;
+   return ProductUtils.getStars(valor);
   }
 
   obtenerIconoCategoria(categoria: string): string {
-    switch (categoria) {
-      case 'electronica': return '🔌';
-      case 'libros': return '📚';
-      case 'ropa': return '👕';
-      default: return '🛒';
-    }
+    return ProductUtils.getCategoryIcon(categoria);
+   
   }
 
-  obtenerNombreCategoria(categoria: string): string {
-    switch (categoria) {
-      case 'electronica': return 'Electrónica';
-      case 'libros': return 'Libros';
-      case 'ropa': return 'Ropa';
-      default: return 'Otros';
-    }
+  obtenerNombreCategoria(categoria: string){
+    return ProductUtils.getCategoryDisplayName(categoria);
   }
 
   onImageError(event: Event): void {
-    (event.target as HTMLImageElement).src = 'https://via.placeholder.com/300x200?text=Sin+imagen';
+    return ProductUtils.handleImageError(event);
   }
 
   trackByProductId(index: number, product: ProductDTO): number {
