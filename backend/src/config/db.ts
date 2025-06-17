@@ -41,8 +41,8 @@ Product.initialize(sequelize);
 Carrito.initialize(sequelize);
 
 // Establecer asociaciones entre modelos
-User.associate();
-Product.associate();
+User.associate({ Product, Carrito });
+Product.associate({ User, Carrito });
 Carrito.associate({ User, Product });
 
 // Función para sincronizar la base de datos

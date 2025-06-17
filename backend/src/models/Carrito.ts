@@ -34,10 +34,9 @@ export class Carrito extends Model
     );
   }
 
-    static associate(models: any) {
-
-     Carrito.belongsTo(models.User, { foreignKey: 'userId' });
-     Carrito.belongsTo(models.Product, { foreignKey: 'productId' });
+    static associate(_models: any) {
+    // Carrito.belongsTo(models.User, { foreignKey: 'userId' });
+    // Carrito.belongsTo(models.Product, { foreignKey: 'productId' });
   }
 
 }
