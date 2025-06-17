@@ -88,18 +88,11 @@ export class Product
     );
   }
 
-  public static associate(models: any): void {
+  public static associate(): void {
     /**
      * @TODO definir asociaciones cuando se cree la tabla de compras
      * Por ahora no hay asociaciones definidas
      */
-
- Product.belongsToMany(models.User, {
-      through: models.Carrito,
-      foreignKey: 'productId',
-      otherKey: 'userId',
-    });
-
 
   }
 }

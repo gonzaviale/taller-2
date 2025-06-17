@@ -1,5 +1,6 @@
 import { Model, DataTypes, Sequelize } from "sequelize";
 import { hashPassword } from "../utils/cryptoUtils";
+import { Product } from './Product';
 
 interface UserAttributes {
   id: number;
@@ -107,10 +108,12 @@ export class User
     );
   }
 
-  public static associate(Model : any): void {
+  public static associate(): void {
     /**
      * @TODO definir asociaciones cuando se cree la tabla de compras
      * Por ahora no hay asociaciones definidas
      */
+
   }
+
 }
