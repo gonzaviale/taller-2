@@ -1,7 +1,6 @@
 import { Sequelize } from 'sequelize';
 import { User } from '../models/User';
 import { Product } from '../models/Product';
-import { Carrito } from '../models/Carrito';
 import dotenv from 'dotenv';
 import axios from 'axios';
 
@@ -38,12 +37,10 @@ const sequelize = new Sequelize(
 // Inicializar modelos
 User.initialize(sequelize);
 Product.initialize(sequelize);
-Carrito.initialize(sequelize);
 
 // Establecer asociaciones entre modelos
-User.associate({ Product, Carrito });
-Product.associate({ User, Carrito });
-Carrito.associate({ User, Product });
+User.associate();
+Product.associate();
 
 // Función para sincronizar la base de datos
 export const syncDatabase = async (force: boolean = false): Promise<void> => {
@@ -87,4 +84,4 @@ export const loadDatabase = async (): Promise<void> => {
   }
 };
 
-export { sequelize, User, Product ,Carrito};
+export { sequelize, User, Product };
