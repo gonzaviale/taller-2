@@ -15,7 +15,8 @@ import { ProductUtils } from '../../modules/products/pages/list-products/compone
 export class ShoppingCartComponent implements OnInit{
   isLoading = false;
   total = 0;
-  carritoItems: ProductoCarrito[] = [];
+  products: ProductoCarrito[] = [];
+   
 
  carritoService = inject(CarritoService);
 
@@ -26,16 +27,16 @@ export class ShoppingCartComponent implements OnInit{
  cargarCarrito(): void {
     this.isLoading = true;
     this.carritoService.obtenerProductos().subscribe(items => {
-      this.carritoItems = items;
+      this.products = items;
       this.isLoading = false;
       this.calcularTotal();
     });
   }
 
-  eliminarDelCarrito(item: ProductoCarrito): void {
-    this.carritoService.eliminarProducto(item).subscribe(() => {
+  eliminarDelCarrito(item: ProductDTO): void {
+     this.carritoService.eliminarProducto(item);
       this.cargarCarrito();
-    });
+    
   }
 
   calcularTotal(): void {
