@@ -48,7 +48,7 @@ Cart.associate();
 // Función para sincronizar la base de datos
 export const syncDatabase = async (force: boolean = false): Promise<void> => {
   try {
-    await sequelize.sync({ force });
+    await sequelize.sync({ force, alter: true });
     console.log('Base de datos sincronizada correctamente');
     if (!isTest) {
       await loadDatabase();
