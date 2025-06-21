@@ -7,6 +7,7 @@ interface CartAttributes {
     id: number;
     userId: number;
     status: StatusCart;
+    total?: number;
     createdAt?: Date;
     updatedAt?: Date;
 }
@@ -50,7 +51,12 @@ export class Cart
                     type: DataTypes.ENUM("buying", "purchased", "cancelled"),
                     allowNull: false,
                     defaultValue: "buying",
-                }
+                },
+                total: {
+                    type: DataTypes.FLOAT,
+                    allowNull: true,
+                    defaultValue: 0.0,
+                },
             },
             {
                 sequelize,
