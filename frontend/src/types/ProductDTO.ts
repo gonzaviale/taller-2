@@ -17,3 +17,8 @@ export interface ProductsResponse {
   currentPage: number;
   totalPages: number;
 }
+
+export interface PriceRange { 
+  priceMin: string;
+  priceMax: string;
+}

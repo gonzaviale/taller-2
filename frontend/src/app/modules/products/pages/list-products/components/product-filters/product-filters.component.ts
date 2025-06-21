@@ -1,6 +1,7 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { ProductUtils } from '../shared/product.utils';
 
 export interface FilterState {
   searchTerm: string;
@@ -50,12 +51,6 @@ export class ProductFiltersComponent {
   }
 
   getCategoryDisplayName(category: string): string {
-    const categoryMap: { [key: string]: string } = {
-      'electronics': 'Electrónicos',
-      'jewelery': 'Joyería',
-      "men's clothing": 'Ropa Hombre',
-      "women's clothing": 'Ropa Mujer'
-    };
-    return categoryMap[category] || category;
+    return ProductUtils.getCategoryDisplayName(category);
   }
 }

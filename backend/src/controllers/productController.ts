@@ -36,7 +36,7 @@ export const getProductController = async (req: Request, res: Response) => {
 
 export const getAllProductsController = async (req: Request, res: Response) => {
   try {
-    const { page, limit, title, priceMax, priceMin } = req.query;
+    const { page, limit, title, priceMax, priceMin, sort, category } = req.query;
 
     // Convertir page y limit a numeros o pone numeros por defecto
     const pageNumber = Number(page) || 1;
@@ -47,8 +47,12 @@ export const getAllProductsController = async (req: Request, res: Response) => {
     const priceMinNumber = Number(priceMin) || undefined;
     const titleString: string | null =
       typeof title === "string" ? title : null;
+    const sortString: string | null =
+      typeof sort === "string" ? sort : null;
+    const categoryString: string | null =
+      typeof category === "string" ? category : null;
 
-    const products = await getAllProductsService(pageNumber, limitNumber, titleString, priceMaxNumber, priceMinNumber);
+    const products = await getAllProductsService(pageNumber, limitNumber, titleString, priceMaxNumber, priceMinNumber, sortString, categoryString);
     res.status(200).json(products);
   } catch (error: any) {
     console.error(error);
