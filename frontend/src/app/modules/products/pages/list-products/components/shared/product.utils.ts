@@ -12,6 +12,15 @@ export class ProductUtils {
         return categoryMap[category] || category;
     }
 
+    static getCategories(): string[] {
+        return [
+            'electronics',
+            'jewelery',
+            'men\'s clothing',
+            'women\'s clothing'
+        ];
+    }
+
     static getCategoryIcon(category: string): string {
         const iconMap: { [key: string]: string } = {
             'electronics': '📱',
