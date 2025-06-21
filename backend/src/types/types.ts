@@ -1,0 +1,1 @@
+export type StatusCart = 'buying' | 'purchased' | 'cancelled';
