@@ -1,7 +1,9 @@
 import { sequelize } from "../config/db";
 import { ProductDTO } from "../types/DTO";
+import { SortOptions } from "../types/types";
 import { convertToProductDTO } from "../utils/convertToDTO";
 import { Op } from "sequelize";
+import { getSorted } from "../utils/getSorted";
 
 export const createProductService = async (productDTO: ProductDTO) => {
   try {
@@ -45,11 +47,16 @@ export const getAllProductsService = async (
   limit: number,
   title: string | null,
   priceMax: number | undefined,
-  priceMin: number | undefined
+  priceMin: number | undefined,
+  sort: string | null = null,
+  category: string | null = null
 ) => {
   try {
     // constante offset para la paginación
     const offset = (page - 1) * limit;
+
+    // Obtener parametros de ordenamiento
+    const order: SortOptions = getSorted(sort);
 
     // Obtener todos los productos con paginación
     // y ordenados por fecha de creación
@@ -59,6 +66,8 @@ export const getAllProductsService = async (
       where: {
         // Filtrar si tiene título, precio máximo o mínimo
         ...(title && { title: { [Op.like]: `%${title}%` } }),
+        // Filtrar por categoría
+        ...(category && { category: { [Op.like]: `%${category}%` } }),
         // Filtrar por precio max y min
         ...(priceMax !== undefined && priceMin !== undefined && {
           price: {
@@ -75,7 +84,7 @@ export const getAllProductsService = async (
           price: { [Op.gte]: priceMin },
         }),
       },
-      order: [["createdAt", "DESC"]],
+      order: [[order.field, order.direction]],
     });
 
     return {
