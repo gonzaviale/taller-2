@@ -67,7 +67,7 @@ export const getAllProductsService = async (
         // Filtrar si tiene título, precio máximo o mínimo
         ...(title && { title: { [Op.like]: `%${title}%` } }),
         // Filtrar por categoría
-        ...(category && { category: { [Op.like]: `%${category}%` } }),
+        ...(category && { category: { [Op.eq]: category } }),
         // Filtrar por precio max y min
         ...(priceMax !== undefined && priceMin !== undefined && {
           price: {
