@@ -7,7 +7,7 @@ export const loginService = async (email: string, password: string) => {
   try {
     // Buscar el usuario por email
     const user = await sequelize.models.User.findOne({
-      where: { email, isActive: true },
+      where: { email },
     });
 
     // Si no existe el usuario, lanzar un error
