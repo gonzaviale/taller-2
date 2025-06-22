@@ -35,3 +35,13 @@ export interface ProductDTO {
   createdAt?: Date;
   updatedAt?: Date;
 }
+
+export interface ProductCartDTO {
+    id: number;
+    title: string;
+    price: number;
+    quantity: number;
+    image: string;
+    description: string;
+    category: string;
+}
