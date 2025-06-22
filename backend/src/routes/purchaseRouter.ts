@@ -7,7 +7,7 @@ import {
 } from "../controllers/purchaseController";
 
 import { Router } from "express";
-import { validateCart } from "../middleware/validateCart";
+import { validatePurchase } from "../middleware/validatePurchase";
 const cartRouter = Router();
 
 /**
@@ -15,29 +15,29 @@ const cartRouter = Router();
  * /api/cart:
  *   post:
  *     summary: Crear un nuevo carrito
- *     tags: [Carts]
+ *     tags: [Purchases]
  *     requestBody:
  *       required: true
  *       content:
  *         application/json:
  *           schema:
- *             $ref: '#/components/schemas/CartCreateDTO'
+ *             $ref: '#/components/schemas/PurchaseCreateDTO'
  *     responses:
  *       201:
  *         description: Carrito creado exitosamente
  *         content:
  *           application/json:
  *             schema:
- *               $ref: '#/components/schemas/CartResponseDTO'
+ *               $ref: '#/components/schemas/PurchaseResponseDTO'
  */
-cartRouter.post("", validateCart ,createPurchaseController);
+cartRouter.post("", validatePurchase ,createPurchaseController);
 
 /**
  * @swagger
  * /api/cart/{id}:
  *   get:
  *     summary: Obtener un carrito por ID
- *     tags: [Carts]
+ *     tags: [Purchases]
  *     parameters:
  *       - in: path
  *         name: id
@@ -51,7 +51,7 @@ cartRouter.post("", validateCart ,createPurchaseController);
  *         content:
  *           application/json:
  *             schema:
- *               $ref: '#/components/schemas/CartResponseDTO'
+ *               $ref: '#/components/schemas/PurchaseResponseDTO'
  */
 cartRouter.get("/:id", getPurchaseController);
 
@@ -60,7 +60,7 @@ cartRouter.get("/:id", getPurchaseController);
  * /api/cart:
  *   get:
  *     summary: Obtener todos los carritos
- *     tags: [Carts]
+ *     tags: [Purchases]
  *     parameters:
  *       - in: query
  *         name: page
@@ -85,10 +85,10 @@ cartRouter.get("/:id", getPurchaseController);
  *             schema:
  *               type: object
  *               properties:
- *                 carts:
+ *                 purchases:
  *                   type: array
  *                   items:
- *                     $ref: '#/components/schemas/CartResponseDTO'
+ *                     $ref: '#/components/schemas/PurchaseResponseDTO'
  */
 cartRouter.get("", getAllPurchasesController);
 
@@ -97,7 +97,7 @@ cartRouter.get("", getAllPurchasesController);
  * /api/cart/{id}:
  *   put:
  *     summary: Actualizar el estado de un carrito
- *     tags: [Carts]
+ *     tags: [Purchases]
  *     parameters:
  *       - in: path
  *         name: id
@@ -121,7 +121,7 @@ cartRouter.get("", getAllPurchasesController);
  *         content:
  *           application/json:
  *            schema:
- *              $ref: '#/components/schemas/CartResponseDTO'
+ *              $ref: '#/components/schemas/PurchaseResponseDTO'
  *       404:
  *         description: Carrito no encontrado
  */
@@ -132,7 +132,7 @@ cartRouter.put("/:id", updatePurchaseController);
  * /api/cart/{id}:
  *   delete:
  *     summary: Eliminar un carrito por ID
- *     tags: [Carts]
+ *     tags: [Purchases]
  *     parameters:
  *       - in: path
  *         name: id

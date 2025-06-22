@@ -12,6 +12,6 @@ router.use("/user", userRouter);
 router.use("/product", productRouter);
 
 // Define las rutas para el cartRouter
-router.use("/cart", cartRouter);
+router.use("/purchase", cartRouter);
 
 export default router;

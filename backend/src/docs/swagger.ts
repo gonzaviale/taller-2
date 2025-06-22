@@ -63,7 +63,7 @@ const swaggerOptions = {
             updatedAt: { type: "string", format: "date-time" },
           },
         },
-        CartCreateDTO: {
+        PurchaseCreateDTO: {
           type: "object",
           properties: {
             userId: { type: "integer" },
@@ -73,7 +73,7 @@ const swaggerOptions = {
             },
           },
         },
-        CartResponseDTO: {
+        PurchaseResponseDTO: {
           type: "object",
           properties: {
             id: { type: "integer" },
