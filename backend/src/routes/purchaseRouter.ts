@@ -1,10 +1,10 @@
 import { 
-    createCartController,
-    getCartController,
-    getAllCartsController,
-    updateCartController,
-    deleteCartController,
-} from "../controllers/cartController";
+    createPurchaseController,
+    getPurchaseController,
+    getAllPurchasesController,
+    updatePurchaseController,
+    deletePurchaseController,
+} from "../controllers/purchaseController";
 
 import { Router } from "express";
 import { validateCart } from "../middleware/validateCart";
@@ -30,7 +30,7 @@ const cartRouter = Router();
  *             schema:
  *               $ref: '#/components/schemas/CartResponseDTO'
  */
-cartRouter.post("", validateCart ,createCartController);
+cartRouter.post("", validateCart ,createPurchaseController);
 
 /**
  * @swagger
@@ -53,7 +53,7 @@ cartRouter.post("", validateCart ,createCartController);
  *             schema:
  *               $ref: '#/components/schemas/CartResponseDTO'
  */
-cartRouter.get("/:id", getCartController);
+cartRouter.get("/:id", getPurchaseController);
 
 /**
  * @swagger
@@ -90,7 +90,7 @@ cartRouter.get("/:id", getCartController);
  *                   items:
  *                     $ref: '#/components/schemas/CartResponseDTO'
  */
-cartRouter.get("", getAllCartsController);
+cartRouter.get("", getAllPurchasesController);
 
 /**
  * @swagger
@@ -125,7 +125,7 @@ cartRouter.get("", getAllCartsController);
  *       404:
  *         description: Carrito no encontrado
  */
-cartRouter.put("/:id", updateCartController);
+cartRouter.put("/:id", updatePurchaseController);
 
 /**
  * @swagger
@@ -146,6 +146,6 @@ cartRouter.put("/:id", updateCartController);
  *       404:
  *        description: Carrito no encontrado
  */
-cartRouter.delete("/:id", deleteCartController);
+cartRouter.delete("/:id", deletePurchaseController);
 
 export default cartRouter;

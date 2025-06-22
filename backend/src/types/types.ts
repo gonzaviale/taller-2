@@ -1,4 +1,4 @@
-export type StatusCart = 'buying' | 'purchased' | 'cancelled';
+export type StatusPurchase = 'buying' | 'purchased' | 'cancelled';
 
 export interface SortOptions {
     field: 'createdAt' | 'ratingRate' | 'price' | 'title';
