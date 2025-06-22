@@ -2,6 +2,7 @@ import { Model, DataTypes, Sequelize } from "sequelize";
 import { Product } from "./Product";
 import { User } from "./User";
 import { StatusPurchase } from "../types/types";
+import { PurchaseProduct } from "./PurchaseProduct";
 
 interface PurchaseAttributes {
     id: number;
@@ -70,7 +71,7 @@ export class Purchase
     public static associate(): void {
         // Relación n a n con Product
         Purchase.belongsToMany(Product, {
-            through: "purchaseProducts", // Tabla intermedia
+            through: PurchaseProduct, // Tabla intermedia
             foreignKey: "purchaseId",
             otherKey: "productId",
         });
