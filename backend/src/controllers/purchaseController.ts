@@ -1,29 +1,29 @@
 import { Request, Response } from "express";
-import { createCartService, getCartService, getAllCartsService, updateCartService, deleteCartService } from "../services/cartService";
+import { createPurchaseService, getPurchaseService, getAllPurchasesService, updatePurchaseService, deletePurchaseService } from "../services/purchaseService";
 
-export const createCartController = async (req: Request, res: Response) => {
+export const createPurchaseController = async (req: Request, res: Response) => {
   try {
     const { userId, productIds } = req.body;
 
-    const newCart = await createCartService(userId, productIds);
-    res.status(201).json(newCart);
+    const newPurchase = await createPurchaseService(userId, productIds);
+    res.status(201).json(newPurchase);
   } catch (error: any) {
     console.error(error);
     res.status(400).json({ message: error.message || error });
   }
 };
 
-export const getCartController = async (req: Request, res: Response) => {
+export const getPurchaseController = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
-    const cart = await getCartService(Number(id));
-    res.status(200).json(cart);
+    const purchase = await getPurchaseService(Number(id));
+    res.status(200).json(purchase);
   } catch (error: any) {
     res.status(404).json({ message: error.message || error });
   }
 };
 
-export const getAllCartsController = async (req: Request, res: Response) => {
+export const getAllPurchasesController = async (req: Request, res: Response) => {
   try {
     const { page, limit, status } = req.query;
 
@@ -31,15 +31,15 @@ export const getAllCartsController = async (req: Request, res: Response) => {
     const limitNumber = Number(limit) || 10;
     const statusString = typeof status === "string" ? status : null;
 
-    const carts = await getAllCartsService(pageNumber, limitNumber, statusString);
-    res.status(200).json(carts);
+    const purchases = await getAllPurchasesService(pageNumber, limitNumber, statusString);
+    res.status(200).json(purchases);
   } catch (error: any) {
     console.error(error);
     res.status(400).json({ message: error.message || error });
   }
 };
 
-export const updateCartController = async (req: Request, res: Response) => {
+export const updatePurchaseController = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
     const { status } = req.body;
@@ -48,18 +48,18 @@ export const updateCartController = async (req: Request, res: Response) => {
       res.status(400).json({ message: "Invalid status" });
     }
 
-    const updatedCart = await updateCartService(Number(id), status);
-    res.status(200).json(updatedCart);
+    const updatedPurchase = await updatePurchaseService(Number(id), status);
+    res.status(200).json(updatedPurchase);
   } catch (error: any) {
     console.error(error);
     res.status(400).json({ message: error.message || error });
   }
 };
 
-export const deleteCartController = async (req: Request, res: Response) => {
+export const deletePurchaseController = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
-    await deleteCartService(Number(id));
+    await deletePurchaseService(Number(id));
     res.status(204).send();
   } catch (error: any) {
     console.error(error);

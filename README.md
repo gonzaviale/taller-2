@@ -34,6 +34,9 @@ DB_DIALECT=mysql
 
 # SERVER
 PORT=3000
+
+# JWT
+JWT_SECRET=tuclavesecreta
 ```
 
 Asegúrate de reemplazar `tuusuario` y `tupassword` con tus credenciales de MySQL.

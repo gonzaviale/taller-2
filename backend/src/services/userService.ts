@@ -1,6 +1,41 @@
 import { sequelize } from "../config/db";
 import { UserRequestDTO, UserResponseDTO } from "../types/DTO";
 import { convertToUserResponseDTO } from "../utils/convertToDTO";
+import { verifyPassword } from "../utils/cryptoUtils";
+import jwt from 'jsonwebtoken';
+
+export const loginService = async (email: string, password: string) => {
+  try {
+    // Buscar el usuario por email
+    const user = await sequelize.models.User.findOne({
+      where: { email },
+    });
+
+    // Si no existe el usuario, lanzar un error
+    if (!user) {
+      throw new Error("User not found");
+    }
+
+    // Convertir el usuario a un DTO
+    const userData = user.get({ plain: true });
+    const isPasswordValid = verifyPassword(password, userData.password);
+    if (!isPasswordValid) {
+      throw new Error("Invalid password");
+    }
+    const userId = userData.id;
+    // Generar un token JWT
+    const token = jwt.sign({ userId }, process.env.JWT_SECRET || 'default', {
+      expiresIn: '24h',
+    });
+    // Retornar el usuario y el token
+    return {
+      userId: userId,
+      token: token,
+    };
+  } catch (error: any) {
+    throw new Error("Error logging in: " + error.message || error);
+  }
+}
 
 export const createUserService = async (userDTO: UserRequestDTO) => {
   try {

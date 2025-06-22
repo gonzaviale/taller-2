@@ -10,3 +10,8 @@ export interface UserDTO {
     createdAt?: Date;
     updatedAt?: Date;
 }
+
+export interface UserResponseLoginDTO { 
+    userId: string;
+    token: string;
+}

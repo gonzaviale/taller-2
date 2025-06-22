@@ -1,32 +1,33 @@
 import { Model, DataTypes, Sequelize } from "sequelize";
 import { Product } from "./Product";
 import { User } from "./User";
-import { StatusCart } from "../types/types";
+import { StatusPurchase } from "../types/types";
 
-interface CartAttributes {
+interface PurchaseAttributes {
     id: number;
     userId: number;
-    status: StatusCart;
-    total?: number;
+    status: StatusPurchase;
+    total: number;
     createdAt?: Date;
     updatedAt?: Date;
 }
 
-export interface CartCreationAttributes extends Omit<CartAttributes, "id"> { }
+export interface PurchaseCreationAttributes extends Omit<PurchaseAttributes, "id"> { }
 
-export class Cart
-    extends Model<CartAttributes, CartCreationAttributes>
-    implements CartAttributes {
+export class Purchase
+    extends Model<PurchaseAttributes, PurchaseCreationAttributes>
+    implements PurchaseAttributes {
     public id!: number;
     public userId!: number;
-    public status!: StatusCart;
+    public status!: StatusPurchase;
+    public total!: number;
 
     // Timestamps
     public readonly createdAt!: Date;
     public readonly updatedAt!: Date;
 
     public static initialize(sequelize: Sequelize): void {
-        Cart.init(
+        Purchase.init(
             {
                 id: {
                     type: DataTypes.INTEGER,
@@ -60,7 +61,7 @@ export class Cart
             },
             {
                 sequelize,
-                tableName: "cart",
+                tableName: "purchase",
                 timestamps: true,
             }
         );
@@ -68,14 +69,14 @@ export class Cart
 
     public static associate(): void {
         // Relación n a n con Product
-        Cart.belongsToMany(Product, {
-            through: "CartProducts", // Tabla intermedia
-            foreignKey: "cartId",
+        Purchase.belongsToMany(Product, {
+            through: "purchase_products", // Tabla intermedia
+            foreignKey: "purchaseId",
             otherKey: "productId",
         });
 
         // Relación 1 a n con User (un usuario tiene muchos carritos)
-        Cart.belongsTo(User, {
+        Purchase.belongsTo(User, {
             foreignKey: "userId",
             as: "user",
         });
