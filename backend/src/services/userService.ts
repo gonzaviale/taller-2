@@ -1,6 +1,31 @@
 import { sequelize } from "../config/db";
 import { UserRequestDTO, UserResponseDTO } from "../types/DTO";
 import { convertToUserResponseDTO } from "../utils/convertToDTO";
+import { verifyPassword } from "../utils/cryptoUtils";
+
+export const loginService = async (email: string, password: string) => {
+  try {
+    // Buscar el usuario por email
+    const user = await sequelize.models.User.findOne({
+      where: { email, isActive: true },
+    });
+
+    // Si no existe el usuario, lanzar un error
+    if (!user) {
+      throw new Error("User not found or inactive");
+    }
+
+    // Convertir el usuario a un DTO
+    const userData = user.get({ plain: true });
+    const isPasswordValid = verifyPassword(password, userData.password);
+    if (!isPasswordValid) {
+      throw new Error("Invalid password");
+    }
+    return convertToUserResponseDTO(userData);
+  } catch (error: any) {
+    throw new Error("Error logging in: " + error.message || error);
+  }
+}
 
 export const createUserService = async (userDTO: UserRequestDTO) => {
   try {
