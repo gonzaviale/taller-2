@@ -2,6 +2,7 @@ import { sequelize } from "../config/db";
 import { UserRequestDTO, UserResponseDTO } from "../types/DTO";
 import { convertToUserResponseDTO } from "../utils/convertToDTO";
 import { verifyPassword } from "../utils/cryptoUtils";
+import jwt from 'jsonwebtoken';
 
 export const loginService = async (email: string, password: string) => {
   try {
@@ -21,7 +22,16 @@ export const loginService = async (email: string, password: string) => {
     if (!isPasswordValid) {
       throw new Error("Invalid password");
     }
-    return convertToUserResponseDTO(userData);
+    const userId = userData.id;
+    // Generar un token JWT
+    const token = jwt.sign({ userId }, process.env.JWT_SECRET || 'default', {
+      expiresIn: '24h',
+    });
+    // Retornar el usuario y el token
+    return {
+      userId: userId,
+      token: token,
+    };
   } catch (error: any) {
     throw new Error("Error logging in: " + error.message || error);
   }

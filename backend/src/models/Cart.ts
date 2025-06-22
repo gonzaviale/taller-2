@@ -7,7 +7,7 @@ interface CartAttributes {
     id: number;
     userId: number;
     status: StatusCart;
-    total?: number;
+    total: number;
     createdAt?: Date;
     updatedAt?: Date;
 }
@@ -20,6 +20,7 @@ export class Cart
     public id!: number;
     public userId!: number;
     public status!: StatusCart;
+    public total!: number;
 
     // Timestamps
     public readonly createdAt!: Date;
