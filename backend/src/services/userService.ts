@@ -12,7 +12,7 @@ export const loginService = async (email: string, password: string) => {
 
     // Si no existe el usuario, lanzar un error
     if (!user) {
-      throw new Error("User not found or inactive");
+      throw new Error("User not found");
     }
 
     // Convertir el usuario a un DTO

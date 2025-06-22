@@ -20,13 +20,12 @@ export const loginController = async (req: Request, res: Response) => {
 
     const user = await loginService(email, password);
 
-    if (!user) {
-      res.status(401).json({ message: "Invalid email or password" });
-    }
-
     res.status(200).json(user);
   } catch (error: any) {
     console.error(error);
+    if (error.message.includes("Invalid password") || error.message.includes("User not found")) {
+      res.status(401).json({ message: error.message });
+    }
     res.status(500).json({
       message: error.message || "Internal server error",
     });
