@@ -1,9 +1,18 @@
 import { Request, Response } from "express";
 import { createPurchaseService, getPurchaseService, getAllPurchasesService, updatePurchaseService, deletePurchaseService } from "../services/purchaseService";
+import { verifyToken } from "../utils/verifyToken";
+import { User } from "../models/User";
 
 export const createPurchaseController = async (req: Request, res: Response) => {
   try {
     const { userId, productIds } = req.body;
+
+    const authHeader = req.headers['authorization'];
+    const token = authHeader && authHeader.split(' ')[1];
+    const { username } = verifyToken(token!);
+
+    const user = await User.findOne({ where: { username } });
+    if (!user) res.status(404).json({ message: 'Usuario no encontrado' });
 
     const newPurchase = await createPurchaseService(userId, productIds);
     res.status(201).json(newPurchase);
