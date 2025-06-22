@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 
-export const validateCart = (req: Request, res: Response, next: NextFunction) => {
+export const validatePurchase = (req: Request, res: Response, next: NextFunction) => {
     const { userId, productIds, status } = req.body;
 
     // verificar si userId, productIds y status son válidos
