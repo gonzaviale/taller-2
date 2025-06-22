@@ -25,7 +25,7 @@ export const createPurchaseService = async (
             purchaseId: newPurchase.id,
             productId,
         }));
-        await sequelize.models.PurchaseProducts.bulkCreate(purchaseProducts);
+        await sequelize.models.purchaseProducts.bulkCreate(purchaseProducts);
 
         return newPurchase;
     } catch (error: any) {

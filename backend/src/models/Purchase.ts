@@ -70,7 +70,7 @@ export class Purchase
     public static associate(): void {
         // Relación n a n con Product
         Purchase.belongsToMany(Product, {
-            through: "purchase_products", // Tabla intermedia
+            through: "purchaseProducts", // Tabla intermedia
             foreignKey: "purchaseId",
             otherKey: "productId",
         });
