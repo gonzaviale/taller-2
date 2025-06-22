@@ -4,6 +4,7 @@ import { Product } from '../models/Product';
 import dotenv from 'dotenv';
 import axios from 'axios';
 import { Purchase } from '../models/Purchase';
+import { PurchaseProduct } from '../models/PurchaseProduct';
 
 dotenv.config();
 
@@ -39,6 +40,7 @@ const sequelize = new Sequelize(
 User.initialize(sequelize);
 Product.initialize(sequelize);
 Purchase.initialize(sequelize);
+PurchaseProduct.initialize(sequelize);
 
 // Establecer asociaciones entre modelos
 User.associate();

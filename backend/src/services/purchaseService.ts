@@ -2,16 +2,21 @@ import { sequelize } from "../config/db";
 import { Purchase } from "../models/Purchase";
 import { Product } from "../models/Product";
 import { StatusPurchase } from "../types/types";
+import { ProductCartDTO } from "../types/DTO";
 
 export const createPurchaseService = async (
     userId: number,
-    productIds: number[],
+    products: ProductCartDTO[],
 ) => {
     try {
 
-        // Calcular el total sumando los precios de los productos
-        const products = await Product.findAll({ where: { id: productIds } });
-        const total = products.reduce((sum, product) => sum + product.price, 0);
+        // Calcular el total sumando los precios de los productos teniendo en cuenta la cantidad
+        const total = products.reduce((acc, product) => {
+            const productPrice = product.price || 0;
+            const productQuantity = product.quantity || 1;
+            return acc + productPrice * productQuantity;
+        }, 0);
+        
 
         // Crear la compra
         const newPurchase = await Purchase.create({
@@ -21,11 +26,12 @@ export const createPurchaseService = async (
         });
 
         // Asociar los productos a la compra
-        const purchaseProducts = productIds.map((productId) => ({
+        const purchaseProducts = products.map((product) => ({
             purchaseId: newPurchase.id,
-            productId,
+            productId: product.id,
+            quantity: product.quantity || 1,
         }));
-        await sequelize.models.purchaseProducts.bulkCreate(purchaseProducts);
+        await sequelize.models.PurchaseProduct.bulkCreate(purchaseProducts);
 
         return newPurchase;
     } catch (error: any) {

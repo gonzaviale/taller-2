@@ -5,7 +5,7 @@ import { User } from "../models/User";
 
 export const createPurchaseController = async (req: Request, res: Response) => {
   try {
-    const { userId, productIds } = req.body;
+    const { userId, products } = req.body;
 
     const authHeader = req.headers['authorization'];
     const token = authHeader && authHeader.split(' ')[1];
@@ -14,7 +14,7 @@ export const createPurchaseController = async (req: Request, res: Response) => {
     const user = await User.findOne({ where: { username } });
     if (!user) res.status(404).json({ message: 'Usuario no encontrado' });
 
-    const newPurchase = await createPurchaseService(userId, productIds);
+    const newPurchase = await createPurchaseService(userId, products);
     res.status(201).json(newPurchase);
   } catch (error: any) {
     console.error(error);
