@@ -18,6 +18,13 @@ export interface ProductsResponse {
   totalPages: number;
 }
 
+
 export interface ProductoCarrito extends ProductDTO{
    quantity: number;
+}
+
+export interface PriceRange { 
+  priceMin: string;
+  priceMax: string;
+
 }

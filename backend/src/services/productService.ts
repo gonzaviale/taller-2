@@ -1,6 +1,9 @@
 import { sequelize } from "../config/db";
 import { ProductDTO } from "../types/DTO";
+import { SortOptions } from "../types/types";
 import { convertToProductDTO } from "../utils/convertToDTO";
+import { Op } from "sequelize";
+import { getSorted } from "../utils/getSorted";
 
 export const createProductService = async (productDTO: ProductDTO) => {
   try {
@@ -13,7 +16,7 @@ export const createProductService = async (productDTO: ProductDTO) => {
 
     const createdProductInstance = await sequelize.models.Product.create(newProduct);
     const createdProduct: ProductDTO = convertToProductDTO(createdProductInstance.get({ plain: true }));
-    
+
     return createdProduct;
   } catch (error: any) {
     throw new Error("Error creating product: " + error.message || error);
@@ -39,17 +42,49 @@ export const getProductService = async (id: number) => {
   }
 };
 
-export const getAllProductsService = async (page: number, limit: number) => {
+export const getAllProductsService = async (
+  page: number,
+  limit: number,
+  title: string | null,
+  priceMax: number | undefined,
+  priceMin: number | undefined,
+  sort: string | null = null,
+  category: string | null = null
+) => {
   try {
     // constante offset para la paginación
     const offset = (page - 1) * limit;
+
+    // Obtener parametros de ordenamiento
+    const order: SortOptions = getSorted(sort);
 
     // Obtener todos los productos con paginación
     // y ordenados por fecha de creación
     const { count, rows } = await sequelize.models.Product.findAndCountAll({
       offset,
       limit,
-      order: [["createdAt", "DESC"]],
+      where: {
+        // Filtrar si tiene título, precio máximo o mínimo
+        ...(title && { title: { [Op.like]: `%${title}%` } }),
+        // Filtrar por categoría
+        ...(category && { category: { [Op.eq]: category } }),
+        // Filtrar por precio max y min
+        ...(priceMax !== undefined && priceMin !== undefined && {
+          price: {
+            [Op.lte]: priceMax,
+            [Op.gte]: priceMin,
+          },
+        }),
+        // filtrarr solo por precio max
+        ...(priceMax !== undefined && priceMin === undefined && {
+          price: { [Op.lte]: priceMax },
+        }),
+        // filtrar solo por precio min
+        ...(priceMin !== undefined && priceMax === undefined && {
+          price: { [Op.gte]: priceMin },
+        }),
+      },
+      order: [[order.field, order.direction]],
     });
 
     return {

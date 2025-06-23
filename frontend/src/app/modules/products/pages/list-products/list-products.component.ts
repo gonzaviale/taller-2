@@ -1,7 +1,7 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { ProductDTO, ProductsResponse } from '../../../../../types/ProductDTO';
+import { PriceRange, ProductDTO, ProductsResponse } from '../../../../../types/ProductDTO';
 import { ProductsService } from '../../../../services/products/products.service';
 import { ProductFiltersComponent } from './components/product-filters/product-filters.component';
 import { ProductGridComponent } from './components/product-grid/product-grid.component';
@@ -9,6 +9,7 @@ import { ProductListComponent } from './components/product-list/product-list.com
 import { LoadingStateComponent } from './components/loading-state/loading-state.component';
 import { EmptyStateComponent } from './components/empty-state/empty-state.component';
 import { MessageNotificationComponent } from './components/message-notification/message-notification.component';
+import { ProductUtils } from './components/shared/product.utils';
 
 export interface FilterState {
   searchTerm: string;
@@ -54,33 +55,28 @@ export class ListProductsComponent implements OnInit {
   productService = inject(ProductsService);
 
   ngOnInit(): void {
+    // CARGA LOS FILTROS GUARDADOS EN LOCAL STORAGE
+    const savedFilters = localStorage.getItem('filterState');
+    if (savedFilters) {
+      this.filterState = JSON.parse(savedFilters);
+    }
     this.loadProducts();
   }
 
   loadProducts(): void {
     this.isLoading = true;
-    this.productService.getProducts().subscribe({
-      next: (response: ProductsResponse) => {
-        this.products = response.products;
-        this.extractCategories();
-        this.applyFilters();
-        this.isLoading = false;
-      },
-      error: (error) => {
-        console.error('Error loading products:', error);
-        this.isLoading = false;
-        this.showMessageToUser('Error al cargar los productos', 'error');
-      }
-    });
+    this.extractCategories();
+    this.applyFilters();
   }
 
   private extractCategories(): void {
-    const uniqueCategories = [...new Set(this.products.map(p => p.category))];
-    this.categories = uniqueCategories.filter(Boolean);
+    this.categories = ProductUtils.getCategories();
   }
 
   onFiltersChange(filters: FilterState): void {
     this.filterState = { ...filters };
+    // FEATURE PEDIDA POR JOEL GUARDAR EN LOCAL STORAGE LOS FILTROS
+    localStorage.setItem('filterState', JSON.stringify(this.filterState));
     this.applyFilters();
   }
 
@@ -95,61 +91,62 @@ export class ListProductsComponent implements OnInit {
       selectedPriceRange: '',
       sortBy: 'default'
     };
+    // LIMPIA EL LOCAL STORAGE DE LOS FILTROS
+    localStorage.removeItem('filterState');
     this.applyFilters();
     this.showMessageToUser('Filtros limpiados', 'success');
   }
 
   private applyFilters(): void {
-    let filtered = [...this.products];
 
-    if (this.filterState.searchTerm.trim()) {
-      const searchLower = this.filterState.searchTerm.toLowerCase();
-      filtered = filtered.filter(product =>
-        product.title.toLowerCase().includes(searchLower) ||
-        product.description.toLowerCase().includes(searchLower) ||
-        product.category.toLowerCase().includes(searchLower)
-      );
+    let filtersParams = {
+      page: 1,
+      limit: 10,
+      title: this.filterState.searchTerm || '',
+      category: this.filterState.selectedCategory || '',
+      priceMax: this.filterState.selectedPriceRange !== ''
+        ? this.applyPriceFilter(this.filterState.selectedPriceRange).priceMax
+        : '',
+      priceMin: this.filterState.selectedPriceRange !== ''
+        ? this.applyPriceFilter(this.filterState.selectedPriceRange).priceMin
+        : '',
+      sort: this.filterState.sortBy || 'default'
     }
 
-    if (this.filterState.selectedCategory) {
-      filtered = filtered.filter(product => product.category === this.filterState.selectedCategory);
-    }
-
-    if (this.filterState.selectedPriceRange) {
-      filtered = this.applyPriceFilter(filtered);
-    }
-
-    filtered = this.applySorting(filtered);
-    this.filteredProducts = filtered;
+    this.productService.getProducts(
+      filtersParams.page,
+      filtersParams.limit,
+      filtersParams.title,
+      filtersParams.category,
+      filtersParams.priceMax,
+      filtersParams.priceMin,
+      filtersParams.sort
+    ).subscribe({
+      next: (response: ProductsResponse) => {
+        this.products = response.products;
+        this.filteredProducts = response.products;
+        this.isLoading = false;
+      },
+      error: (error) => {
+        console.error('Error applying filters:', error);
+        this.isLoading = false;
+        this.showMessageToUser('Error al cargar los productos', 'error');
+      }
+    });
   }
 
-  private applyPriceFilter(products: ProductDTO[]): ProductDTO[] {
-    switch (this.filterState.selectedPriceRange) {
+  private applyPriceFilter(selectedPriceRange: string): PriceRange {
+    switch (selectedPriceRange) {
       case '0-50':
-        return products.filter(p => p.price <= 50);
+        return { priceMin: "0", priceMax: "50" };
       case '50-100':
-        return products.filter(p => p.price > 50 && p.price <= 100);
+        return { priceMin: "50", priceMax: "100" };
       case '100-500':
-        return products.filter(p => p.price > 100 && p.price <= 500);
+        return { priceMin: "100", priceMax: "500" };
       case '500+':
-        return products.filter(p => p.price > 500);
+        return { priceMin: "500", priceMax: "" };
       default:
-        return products;
-    }
-  }
-
-  private applySorting(products: ProductDTO[]): ProductDTO[] {
-    switch (this.filterState.sortBy) {
-      case 'price-asc':
-        return products.sort((a, b) => a.price - b.price);
-      case 'price-desc':
-        return products.sort((a, b) => b.price - a.price);
-      case 'rating':
-        return products.sort((a, b) => (b.ratingRate || 0) - (a.ratingRate || 0));
-      case 'name':
-        return products.sort((a, b) => a.title.localeCompare(b.title));
-      default:
-        return products;
+        return { priceMin: "0", priceMax: "" };
     }
   }
 

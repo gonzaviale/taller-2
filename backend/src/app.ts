@@ -4,7 +4,7 @@ import cors from 'cors';
 import morgan from 'morgan';
 import { syncDatabase } from './config/db';
 import { setupSwagger } from './docs/swagger';
-import router from './routes';
+import router from './routes/index.routes';
 
 dotenv.config();
 

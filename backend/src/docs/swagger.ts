@@ -63,6 +63,27 @@ const swaggerOptions = {
             updatedAt: { type: "string", format: "date-time" },
           },
         },
+        PurchaseCreateDTO: {
+          type: "object",
+          properties: {
+            userId: { type: "integer" },
+            productIds: {
+              type: "array",
+              items: { type: "integer" },
+            },
+          },
+        },
+        PurchaseResponseDTO: {
+          type: "object",
+          properties: {
+            id: { type: "integer" },
+            userId: { type: "integer" },
+            total: { type: "number" },
+            status: { type: "string" },
+            createdAt: { type: "string", format: "date-time" },
+            updatedAt: { type: "string", format: "date-time" },
+          },
+        },
       },
     },
     security: [

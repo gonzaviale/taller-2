@@ -6,7 +6,25 @@ import {
   getAllUsersService,
   getUserService,
   updateUserService,
+  loginService,
 } from "../services/userService";
+
+export const loginController = async (req: Request, res: Response) => {
+  try {
+    const { email, password } = req.body;
+    const user = await loginService(email, password);
+    res.status(200).json(user);
+
+  } catch (error: any) {
+    console.error("Login error:", error.message);
+
+    if (error.message === "User not found" || error.message === "Invalid password") {
+      res.status(401).json({ message: error.message });
+    }
+
+    res.status(500).json({ message: "Internal server error" });
+  }
+};
 
 export const createUserController = async (req: Request, res: Response) => {
   try {

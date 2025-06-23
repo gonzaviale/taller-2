@@ -5,9 +5,13 @@ import {
   getAllUsersController,
   getUserController,
   updateUserController,
+  loginController,
 } from "../controllers/userController";
+import { validateLogin } from "../middleware/validateLogin";
 
 const userRouter = Router();
+
+userRouter.post("/login", validateLogin, loginController);
 
 /**
  * @swagger

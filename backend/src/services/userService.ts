@@ -1,6 +1,33 @@
 import { sequelize } from "../config/db";
 import { UserRequestDTO, UserResponseDTO } from "../types/DTO";
 import { convertToUserResponseDTO } from "../utils/convertToDTO";
+import { verifyPassword } from "../utils/cryptoUtils";
+import jwt from 'jsonwebtoken';
+
+export const loginService = async (email: string, password: string) => {
+  const user = await sequelize.models.User.findOne({ where: { email } });
+
+  if (!user) {
+    throw new Error("User not found");
+  }
+
+  const userData = user.get({ plain: true });
+  const isPasswordValid = verifyPassword(password, userData.password);
+
+  if (!isPasswordValid) {
+    throw new Error("Invalid password");
+  }
+
+  const token = jwt.sign({ username: userData.username }, process.env.JWT_SECRET || 'default', {
+    expiresIn: '24h',
+  });
+
+  return {
+    userId: userData.id,
+    token,
+  };
+};
+
 
 export const createUserService = async (userDTO: UserRequestDTO) => {
   try {
