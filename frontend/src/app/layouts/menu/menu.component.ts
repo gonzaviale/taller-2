@@ -55,7 +55,7 @@ export class MenuComponent implements OnInit {
   }
 
   navigateToCarrito() {
-    // this.router.navigate(['/carrito']);
+     this.router.navigate(['/carrito']);
   }
 
   cerrarSesion() {
