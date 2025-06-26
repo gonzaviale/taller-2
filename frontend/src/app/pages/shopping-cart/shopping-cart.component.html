@@ -1,19 +1,29 @@
 <app-menu></app-menu>
+
 <div class="min-h-screen bg-gray-50 py-10 px-4">
   <div class="max-w-6xl mx-auto">
-    <h1 class="text-3xl font-bold text-gray-900 mb-10">🛒 Tu Carrito</h1>
+    <!-- boton atras -->
+    <div class="flex items-center mb-8">
+      <a [routerLink]="['/home']"
+        class="flex items-center text-blue-600 hover:text-blue-800 transition-colors duration-200 font-medium">
+        ← Volver a productos
+      </a>
+
+    </div>
+
+    <h1 class="text-3xl font-bold text-gray-900 mb-10 text-center">🛒 Tu Carrito</h1>
 
     <div *ngIf="tieneProductos; else sinProductos" class="space-y-8">
       <div *ngFor="let item of cart.products; trackBy: trackByProductId"
-           class="bg-white rounded-2xl shadow-lg border border-gray-100">
+        class="bg-white rounded-2xl shadow-lg border border-gray-100">
 
         <div class="grid grid-cols-1 md:grid-cols-4">
           <!-- Imagen -->
           <div class="relative md:col-span-1">
-            <img [src]="item.image" [alt]="item.title"
-                 class="w-full h-56 object-cover md:h-full"
-                 (error)="onImageError($event)">
-            <div class="absolute top-4 right-4 bg-gradient-to-r from-blue-600 to-purple-600 text-white px-3 py-1 rounded-full text-xs font-semibold">
+            <img [src]="item.image" [alt]="item.title" class="w-full h-56 object-cover md:h-full"
+              (error)="onImageError($event)">
+            <div
+              class="absolute top-4 right-4 bg-gradient-to-r from-blue-600 to-purple-600 text-white px-3 py-1 rounded-full text-xs font-semibold">
               {{ obtenerIconoCategoria(item.category) }}
             </div>
           </div>
@@ -30,17 +40,23 @@
 
               <p class="text-gray-600 mt-2 text-sm">{{ item.description }}</p>
 
-              
+
             </div>
 
             <!-- Cantidad y acciones -->
             <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
               <div class="flex items-center">
-                <span class="text-gray-700 font-medium mr-3">Cantidad:</span>
-                <div class="flex items-center border border-gray-300 rounded-lg overflow-hidden">
-                  <button class="px-4 py-2 text-gray-600 hover:bg-gray-100 transition">-</button>
-                  <span class="px-4 py-2 w-10 text-center text-gray-800">{{ item.quantity }}</span>
-                  <button class="px-4 py-2 text-gray-600 hover:bg-gray-100 transition">+</button>
+                <span class="text-sm text-gray-700 mr-2">Cantidad:</span>
+                <div class="flex items-center border border-gray-300 rounded overflow-hidden">
+                  <button (click)="actualizarCantidad(item.id, -1)"
+                    class="px-2 py-1 text-gray-600 hover:bg-gray-100 text-sm">
+                    –
+                  </button>
+                  <span class="px-3 text-sm text-center text-gray-800">{{ item.quantity }}</span>
+                  <button (click)="actualizarCantidad(item.id, 1)"
+                    class="px-2 py-1 text-gray-600 hover:bg-gray-100 text-sm">
+                    +
+                  </button>
                 </div>
               </div>
 
@@ -49,7 +65,7 @@
               </div>
 
               <button (click)="eliminarDelCarrito(item.id)"
-                      class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-xl font-medium transition-all">
+                class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-xl font-medium transition-all">
                 ❌ Eliminar
               </button>
             </div>
@@ -57,15 +73,22 @@
         </div>
       </div>
 
-      <div class="flex justify-between items-center mt-10 border-t pt-6">
-        <div class="text-2xl font-bold text-gray-900">
-          Total general: ${{ cart.totalPrice | number:'1.2-2' }}
-        </div>
+      <div class="flex flex-col md:flex-row md:justify-between md:items-center mt-8 border-t pt-4 gap-4">
+  <div class="text-xl font-bold text-gray-900">
+    Total: ${{ cart.totalPrice | number:'1.2-2' }}
+  </div>
 
-        <button class="bg-gradient-to-r from-green-600 to-emerald-600 text-white px-6 py-4 rounded-xl text-lg font-semibold hover:shadow-lg hover:scale-105 transition-all">
-          🛍️ Finalizar Compra
-        </button>
-      </div>
+  <div class="flex gap-3">
+    <button (click)="vaciarCarrito()"
+            class="bg-red-100 hover:bg-red-200 text-red-700 px-4 py-2 rounded-lg text-sm font-medium transition">
+      🗑️ Vaciar Carrito
+    </button>
+
+    <button class="bg-green-600 hover:bg-emerald-600 text-white px-5 py-3 rounded-lg text-base font-semibold transition">
+      🛍️ Finalizar Compra
+    </button>
+  </div>
+</div>
     </div>
 
     <!-- Plantilla si no hay productos -->
@@ -82,6 +105,3 @@
     </ng-template>
   </div>
 </div>
-
-
-

@@ -6,11 +6,11 @@ import { ProductDTO,ProductoCarrito} from '../../../types/ProductDTO';
 import { ProductUtils } from '../../modules/products/pages/list-products/components/shared/product.utils'; 
 import { CartsService } from '../../services/carts/carts.service';
 import { CartDTO } from '../../../types/CartDTO';
-import { Subscription } from 'rxjs';
+import { RouterModule } from '@angular/router';
 
 @Component({
   selector: 'app-shopping-cart',
-  imports: [MenuComponent,CommonModule],
+  imports: [MenuComponent,CommonModule,RouterModule],
   templateUrl: './shopping-cart.component.html',
   styleUrl: './shopping-cart.component.css'
 })
@@ -32,10 +32,9 @@ export class ShoppingCartComponent implements OnInit{
       this.cart = cart;                    
       this.isLoading = false;
        console.log('Carrito completo:', JSON.stringify(cart, null, 2));
-     // this.calcularTotal();
+     
     });
   }
-
 
 
   eliminarDelCarrito(productId :number): void {
@@ -43,13 +42,14 @@ export class ShoppingCartComponent implements OnInit{
       this.cargarCarrito();
     
   }
-/*
-  calcularTotal(): void {
-    this.carritoService.obtenerTotal().subscribe(total => {
-      this.total = total;
-    });
+
+  vaciarCarrito(){
+    this.carritoService.clearCart();
   }
-*/
+
+actualizarCantidad(productId: number, cambio: number): void {
+  this.carritoService.cambiarCantidad(productId, cambio);
+}
 
 tieneProductos(): boolean {
   return !this.isLoading && this.cart?.products?.length > 0;

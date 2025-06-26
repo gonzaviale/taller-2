@@ -2,7 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { environment } from '../../../environments/environment.development';
 import { CartDTO, PurchaseDTO, PurchaseRequest, PurchaseResponse } from '../../../types/CartDTO';
-import { Observable ,of} from 'rxjs';
+import { Observable, of } from 'rxjs';
 import { AuthService } from '../auth/auth.service';
 import { ProductDTO } from '../../../../../backend/src/types/DTO';
 
@@ -11,15 +11,15 @@ import { ProductDTO } from '../../../../../backend/src/types/DTO';
 })
 export class CartsService {
 
-  constructor() { 
+  constructor() {
 
- const savedCart = localStorage.getItem(this.STORAGE_KEY);
+    const savedCart = localStorage.getItem(this.STORAGE_KEY);
     if (savedCart) {
       this.cart = JSON.parse(savedCart);
     }
-    
+
   }
- private readonly STORAGE_KEY = 'miCarrito';
+  private readonly STORAGE_KEY = 'miCarrito';
   http = inject(HttpClient);
   authService = inject(AuthService);
   apiUrl = environment.api_url;
@@ -30,7 +30,7 @@ export class CartsService {
     totalPrice: 0
   }
 
-  getCart(): Observable<CartDTO>  {
+  getCart(): Observable<CartDTO> {
     return of(this.cart);
   }
 
@@ -42,11 +42,26 @@ export class CartsService {
       this.cart.products.push(product);
     }
     this.updateTotalPrice();
-       localStorage.setItem(this.STORAGE_KEY, JSON.stringify(this.cart));
-    
+    localStorage.setItem(this.STORAGE_KEY, JSON.stringify(this.cart));
+
   }
 
- 
+  cambiarCantidad(productId: number, cambio: number): void {
+    const producto = this.cart.products.find(p => p.id === productId);
+    if (!producto) return;
+
+    const nuevaCantidad = producto.quantity + cambio;
+    // Evitar cantidades menores a 1
+    if (nuevaCantidad < 1) return;
+    producto.quantity = nuevaCantidad;
+
+    this.updateTotalPrice();
+    localStorage.setItem('miCarrito', JSON.stringify(this.cart));
+
+  }
+
+
+
   removeFromCart(productId: number): void {
     this.cart.products = this.cart.products.filter(p => p.id !== productId);
     this.updateTotalPrice();
@@ -57,7 +72,7 @@ export class CartsService {
       return total + (product.price * product.quantity);
     }, 0);
   }
-  
+
   clearCart(): void {
     this.cart.products = [];
     this.cart.totalPrice = 0;
