@@ -2,9 +2,11 @@ import {  inject, OnInit } from '@angular/core';
 import { Component } from '@angular/core';
 import { MenuComponent } from '../../layouts/menu/menu.component';
 import { CommonModule } from '@angular/common';
-import { CarritoService} from '../../services/carrito/carrito.service';
 import { ProductDTO,ProductoCarrito} from '../../../types/ProductDTO';
 import { ProductUtils } from '../../modules/products/pages/list-products/components/shared/product.utils'; 
+import { CartsService } from '../../services/carts/carts.service';
+import { CartDTO } from '../../../types/CartDTO';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-shopping-cart',
@@ -15,35 +17,43 @@ import { ProductUtils } from '../../modules/products/pages/list-products/compone
 export class ShoppingCartComponent implements OnInit{
   isLoading = false;
   total = 0;
-  products: ProductoCarrito[] = [];
+  cart: CartDTO = { products: [], totalPrice: 0 };
    
 
- carritoService = inject(CarritoService);
+ carritoService = inject(CartsService);
 
   ngOnInit(): void {
      this.cargarCarrito();
   }
 
- cargarCarrito(): void {
+  cargarCarrito(): void {
     this.isLoading = true;
-    this.carritoService.obtenerProductos().subscribe(items => {
-      this.products = items;
+    this.carritoService.getCart().subscribe(cart => {   
+      this.cart = cart;                    
       this.isLoading = false;
-      this.calcularTotal();
+       console.log('Carrito completo:', JSON.stringify(cart, null, 2));
+     // this.calcularTotal();
     });
   }
 
-  eliminarDelCarrito(item: ProductDTO): void {
-     this.carritoService.eliminarProducto(item);
+
+
+  eliminarDelCarrito(productId :number): void {
+     this.carritoService.removeFromCart(productId);
       this.cargarCarrito();
     
   }
-
+/*
   calcularTotal(): void {
     this.carritoService.obtenerTotal().subscribe(total => {
       this.total = total;
     });
   }
+*/
+
+tieneProductos(): boolean {
+  return !this.isLoading && this.cart?.products?.length > 0;
+}
 
   obtenerEstrellas(valor: number): string {
    return ProductUtils.getStars(valor);

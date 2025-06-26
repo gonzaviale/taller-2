@@ -2,16 +2,24 @@ import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { environment } from '../../../environments/environment.development';
 import { CartDTO, PurchaseDTO, PurchaseRequest, PurchaseResponse } from '../../../types/CartDTO';
-import { Observable } from 'rxjs';
+import { Observable ,of} from 'rxjs';
 import { AuthService } from '../auth/auth.service';
+import { ProductDTO } from '../../../../../backend/src/types/DTO';
 
 @Injectable({
   providedIn: 'root'
 })
 export class CartsService {
 
-  constructor() { }
+  constructor() { 
 
+ const savedCart = localStorage.getItem(this.STORAGE_KEY);
+    if (savedCart) {
+      this.cart = JSON.parse(savedCart);
+    }
+    
+  }
+ private readonly STORAGE_KEY = 'miCarrito';
   http = inject(HttpClient);
   authService = inject(AuthService);
   apiUrl = environment.api_url;
@@ -22,8 +30,8 @@ export class CartsService {
     totalPrice: 0
   }
 
-  getCart(): CartDTO {
-    return this.cart;
+  getCart(): Observable<CartDTO>  {
+    return of(this.cart);
   }
 
   addToCart(product: CartDTO['products'][number]): void {
@@ -34,8 +42,11 @@ export class CartsService {
       this.cart.products.push(product);
     }
     this.updateTotalPrice();
+       localStorage.setItem(this.STORAGE_KEY, JSON.stringify(this.cart));
+    
   }
 
+ 
   removeFromCart(productId: number): void {
     this.cart.products = this.cart.products.filter(p => p.id !== productId);
     this.updateTotalPrice();
