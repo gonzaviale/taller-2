@@ -15,9 +15,7 @@ export class CartsService {
   http = inject(HttpClient);
   authService = inject(AuthService);
   apiUrl = environment.api_url;
-  private purchaseId?: number;
   private readonly STORAGE_KEY = 'miCarrito';
-
 
   constructor() {
     
@@ -25,14 +23,9 @@ export class CartsService {
     if (savedCart) {
       this.cart = JSON.parse(savedCart);
     }
-     // Si hay usuario, cargar carrito del backend
-    if (this.authService.isAuthenticated()) {
-      //this.loadOrCreatePurchase();
-
-  }
-  
+    
 }
- 
+
   // crear un carrito singleton para que no se pierda al refrescar la pagina
   private cart: CartDTO = {
     products: [],
@@ -68,8 +61,6 @@ export class CartsService {
     localStorage.setItem('miCarrito', JSON.stringify(this.cart));
 
   }
-
-
 
   removeFromCart(productId: number): void {
     this.cart.products = this.cart.products.filter(p => p.id !== productId);

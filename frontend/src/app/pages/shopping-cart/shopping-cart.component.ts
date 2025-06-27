@@ -19,7 +19,6 @@ export class ShoppingCartComponent implements OnInit{
   total = 0;
   cart: CartDTO = { products: [], totalPrice: 0 };
    
-
  carritoService = inject(CartsService);
 
   ngOnInit(): void {
@@ -35,7 +34,6 @@ export class ShoppingCartComponent implements OnInit{
      
     });
   }
-
 
   eliminarDelCarrito(productId :number): void {
      this.carritoService.removeFromCart(productId);
