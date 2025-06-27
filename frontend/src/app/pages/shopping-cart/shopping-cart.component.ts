@@ -22,27 +22,30 @@ export class ShoppingCartComponent implements OnInit{
  carritoService = inject(CartsService);
 
   ngOnInit(): void {
-     this.cargarCarrito();
+     this.loadCart();
   }
 
-  cargarCarrito(): void {
+  loadCart(): void {
     this.isLoading = true;
     this.carritoService.getCart().subscribe(cart => {   
       this.cart = cart;                    
       this.isLoading = false;
-       console.log('Carrito completo:', JSON.stringify(cart, null, 2));
-     
+       
     });
   }
 
   eliminarDelCarrito(productId :number): void {
      this.carritoService.removeFromCart(productId);
-      this.cargarCarrito();
+      this.loadCart();
     
   }
 
   vaciarCarrito(){
     this.carritoService.clearCart();
+  }
+
+  finalizarCompra(){
+    
   }
 
 actualizarCantidad(productId: number, cambio: number): void {
