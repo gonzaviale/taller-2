@@ -11,19 +11,28 @@ import { ProductDTO } from '../../../../../backend/src/types/DTO';
 })
 export class CartsService {
 
-  constructor() {
 
+  http = inject(HttpClient);
+  authService = inject(AuthService);
+  apiUrl = environment.api_url;
+  private purchaseId?: number;
+  private readonly STORAGE_KEY = 'miCarrito';
+
+
+  constructor() {
+    
     const savedCart = localStorage.getItem(this.STORAGE_KEY);
     if (savedCart) {
       this.cart = JSON.parse(savedCart);
     }
+     // Si hay usuario, cargar carrito del backend
+    if (this.authService.isAuthenticated()) {
+      //this.loadOrCreatePurchase();
 
   }
-  private readonly STORAGE_KEY = 'miCarrito';
-  http = inject(HttpClient);
-  authService = inject(AuthService);
-  apiUrl = environment.api_url;
-
+  
+}
+ 
   // crear un carrito singleton para que no se pierda al refrescar la pagina
   private cart: CartDTO = {
     products: [],
