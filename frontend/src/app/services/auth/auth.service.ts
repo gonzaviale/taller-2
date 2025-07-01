@@ -20,6 +20,9 @@ export class AuthService {
   login(email: string, password: string): Observable<UserResponseLoginDTO> {
     return this.http.post<UserResponseLoginDTO>(`${this.apiUrl}/user/login`, { email, password });
   }
+  loginWithGoogle(idToken: string): Observable<UserResponseLoginDTO> {
+  return this.http.post<UserResponseLoginDTO>(`${this.apiUrl}/user/login/google`, { idToken });
+  }
   logout(): void {
     localStorage.removeItem('userId');
     localStorage.removeItem('token');

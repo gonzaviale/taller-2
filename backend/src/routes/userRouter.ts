@@ -8,11 +8,12 @@ import {
   loginController,
 } from "../controllers/userController";
 import { validateLogin } from "../middleware/validateLogin";
+import { loginWithGoogleController } from '../controllers/userController';
 
 const userRouter = Router();
 
 userRouter.post("/login", validateLogin, loginController);
-
+userRouter.post('/login/google', loginWithGoogleController);
 /**
  * @swagger
  * /api/user:
