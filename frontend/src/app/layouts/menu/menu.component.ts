@@ -49,7 +49,7 @@ export class MenuComponent implements OnInit {
 
   navigateToMiPerfil() {
     this.closeDropdown();
-    // this.router.navigate(['/mi-perfil']);
+    this.router.navigate(['/perfil']);
   }
 
   navigateToCarrito() {
