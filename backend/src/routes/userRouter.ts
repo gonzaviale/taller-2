@@ -149,4 +149,63 @@ userRouter.put("/:id", updateUserController);
  */
 userRouter.delete("/:id", deleteUserController);
 
+/**
+ * @swagger
+ * /api/user/profile/{id}:
+ *   get:
+ *     summary: Obtener el perfil del usuario (por ID)
+ *     tags: [Perfil]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         description: ID del usuario actual (perfil)
+ *     responses:
+ *       200:
+ *         description: Perfil obtenido correctamente
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/UserResponseDTO'
+ *       404:
+ *         description: Usuario no encontrado
+ */
+userRouter.get("/profile/:id", getUserController);
+
+/**
+ * @swagger
+ * /api/user/profile/{id}:
+ *   put:
+ *     summary: Actualizar el perfil del usuario (por ID)
+ *     tags: [Perfil]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         description: ID del usuario actual (perfil)
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/UserRequestDTO'
+ *     responses:
+ *       200:
+ *         description: Perfil actualizado correctamente
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/UserResponseDTO'
+ *       400:
+ *         description: Datos inválidos
+ *       404:
+ *         description: Usuario no encontrado
+ */
+userRouter.put("/profile/:id", updateUserController);
+
+
 export default userRouter;

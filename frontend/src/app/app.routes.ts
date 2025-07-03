@@ -13,7 +13,7 @@ export const routes: Routes = [
     {
     path: 'perfil',
     loadComponent: () =>
-      import('./pages/profile-user/profile-user.component').then(m => m.ProfileUserComponent)
+      import('./pages/profile-user/profile-user.component').then(m => m.PerfilUsuarioComponent)
     },
     {
         path: '',

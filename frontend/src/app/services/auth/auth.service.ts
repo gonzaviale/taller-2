@@ -30,6 +30,16 @@ export class AuthService {
   register(user: UserDTO): Observable<any> {
     return this.http.post(`${this.apiUrl}/user`, user);
   }
+  getProfile(): Observable<UserDTO> {
+  const userId = this.getUserId();
+  return this.http.get<UserDTO>(`${this.apiUrl}/user/profile/${userId}`);
+}
+
+updateProfile(updatedUser: Partial<UserDTO>): Observable<UserDTO> {
+  const userId = this.getUserId();
+  return this.http.put<UserDTO>(`${this.apiUrl}/user/profile/${userId}`, updatedUser);
+}
+
   setUserId(id: string | undefined) {
     localStorage.setItem('userId', id || '');
   }

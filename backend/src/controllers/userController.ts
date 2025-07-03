@@ -7,6 +7,8 @@ import {
   getUserService,
   updateUserService,
   loginService,
+  getProfileService,
+  updateProfileService,
 } from "../services/userService";
 import { OAuth2Client } from 'google-auth-library';
 import jwt from 'jsonwebtoken';
@@ -140,6 +142,37 @@ export const loginWithGoogleController = async (req: Request, res: Response) => 
     res.status(401).json({ message: 'Token inválido o error de autenticación' });
   }
 };
+
+export const getProfileController = async (req: Request, res: Response) => {
+  try {
+    const userId = Number(req.params.id); 
+    if (isNaN(userId)) {
+      return res.status(400).json({ message: 'Invalid user ID' });
+    }
+
+    const profile = await getProfileService(userId);
+    res.status(200).json(profile);
+  } catch (error: any) {
+    res.status(404).json({ message: error.message || 'Error al obtener perfil' });
+  }
+};
+
+export const updateProfileController = async (req: Request, res: Response) => {
+  try {
+    const userId = Number(req.params.id);
+    const userDTO: UserRequestDTO = req.body;
+
+    if (isNaN(userId)) {
+      return res.status(400).json({ message: 'Invalid user ID' });
+    }
+
+    const updated = await updateProfileService(userId, userDTO);
+    res.status(200).json(updated);
+  } catch (error: any) {
+    res.status(400).json({ message: error.message || 'Error al actualizar perfil' });
+  }
+};
+
 
 
 export const deleteUserController = async (req: Request, res: Response) => {

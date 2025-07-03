@@ -1,15 +1,102 @@
-import { Component } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ReactiveFormsModule, FormBuilder} from '@angular/forms';
+import { FormsModule } from '@angular/forms';
+import { AuthService } from '../../services/auth/auth.service';
+import { UserDTO } from '../../../types/UserDTO';
 
 @Component({
-  selector: 'app-profile-user',
-  imports: [CommonModule, ReactiveFormsModule],
+  selector: 'app-perfil-usuario',
+  standalone: true,
+  imports: [CommonModule, FormsModule],
   templateUrl: './profile-user.component.html',
-  styleUrl: './profile-user.component.css'
+  styleUrl: './profile-user.component.css' // o .scss
 })
-export class ProfileUserComponent {
+export class PerfilUsuarioComponent implements OnInit {
+  private authService = inject(AuthService);
 
+  user: UserDTO = {
+    username: '',
+    email: '',
+    password: '',
+    firstName: '',
+    lastName: '',
+    address: ''
+  };
 
+  confirmPassword: string = '';
+  errorMessage = '';
+  successMessage = '';
+  isLoading = false;
 
+  ngOnInit(): void {
+    this.authService.getProfile().subscribe({
+      next: (data) => {
+        this.user = { ...data, password: '' }; // Evita mostrar el password
+      },
+      error: () => {
+        this.errorMessage = 'Error al cargar el perfil';
+      }
+    });
+  }
+
+  onUpdate(): void {
+    this.clearMessages();
+
+    if (!this.validateForm()) {
+      return;
+    }
+
+    this.isLoading = true;
+
+    this.authService.updateProfile(this.user).subscribe({
+      next: () => {
+        this.successMessage = 'Perfil actualizado correctamente.';
+        this.isLoading = false;
+      },
+      error: () => {
+        this.errorMessage = 'Error al actualizar el perfil.';
+        this.isLoading = false;
+      }
+    });
+  }
+
+  validateForm(): boolean {
+    if (!this.user.firstName.trim()) {
+      this.errorMessage = 'El nombre es requerido.';
+      return false;
+    }
+
+    if (!this.user.lastName.trim()) {
+      this.errorMessage = 'El apellido es requerido.';
+      return false;
+    }
+
+    if (!this.user.email.trim()) {
+      this.errorMessage = 'El email es requerido.';
+      return false;
+    }
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(this.user.email)) {
+      this.errorMessage = 'Formato de email inválido.';
+      return false;
+    }
+
+    if (this.user.password && this.user.password.length < 6) {
+      this.errorMessage = 'La contraseña debe tener al menos 6 caracteres.';
+      return false;
+    }
+
+    if (this.user.password && this.user.password !== this.confirmPassword) {
+      this.errorMessage = 'Las contraseñas no coinciden.';
+      return false;
+    }
+
+    return true;
+  }
+
+  clearMessages(): void {
+    this.errorMessage = '';
+    this.successMessage = '';
+  }
 }
