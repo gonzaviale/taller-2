@@ -5,10 +5,13 @@ import { Location } from '@angular/common';
 import { ProductDTO } from '../../../../../types/ProductDTO';
 import { ProductsService } from '../../../../services/products/products.service';
 import { ProductUtils } from '../list-products/components/shared/product.utils';
+import { MessageNotificationComponent } from '../list-products/components/message-notification/message-notification.component';
+import { CartsService } from '../../../../services/carts/carts.service';
+import { CartDTO,ProductCartDTO} from '../../../../../types/CartDTO';
 
 @Component({
   selector: 'app-detail-product',
-  imports: [CommonModule],
+  imports: [CommonModule,MessageNotificationComponent],
   templateUrl: './detail-product.component.html',
   styleUrl: './detail-product.component.css'
 })
@@ -16,9 +19,14 @@ export class DetailProductComponent {
   private route = inject(ActivatedRoute);
   private location = inject(Location);
   private productService = inject(ProductsService);
+  private CartService = inject(CartsService);
 
   product: ProductDTO | null = null;
   quantity: number = 1;
+  showMessage: boolean = false;
+  message: string = '';
+  messageType: 'success' | 'error' = 'success';
+
 
   ngOnInit() {
     // el id se saca de la ruta
@@ -70,8 +78,24 @@ export class DetailProductComponent {
   }
 
   onAddToCart(product: ProductDTO) {
-    /**@todo: agregar la logica */
+
+     const cartProduct: ProductCartDTO = this.productDTOtoCartProductDTO(product);
+   
+    this.CartService.addToCart(cartProduct);
+    this.showMessageToUser(`${product.title} agregado al carrito`, 'success');
     console.log(`Agregando ${this.quantity} unidades de ${product.title} al carrito`);
+  }
+
+  private productDTOtoCartProductDTO(product: ProductDTO): ProductCartDTO {
+    return {
+      id: product.id!,
+      title: product.title,
+      price: product.price,
+      description: product.description,
+      category: product.category,
+      image: product.image,
+      quantity: this.quantity
+    };
   }
 
   onBuyNow(product: ProductDTO) {
@@ -85,5 +109,15 @@ export class DetailProductComponent {
 
   goBack() {
     this.location.back();
+  }
+
+  private showMessageToUser(message: string, type: 'success' | 'error'): void {
+    this.message = message;
+    this.messageType = type;
+    this.showMessage = true;
+
+    setTimeout(() => {
+      this.showMessage = false;
+    }, 3000);
   }
 }

@@ -7,7 +7,7 @@ export interface PurchaseDTO {
     totalPrice?: number;
     createdAt?: Date;
     updatedAt?: Date;
-    Products?: ProductDTO[];
+    Products?: ProductCartDTO[];
 }
 
 export interface PurchaseRequest {

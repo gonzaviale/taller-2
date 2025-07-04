@@ -10,12 +10,14 @@ import { AuthService } from '../../services/auth/auth.service';
   templateUrl: './menu.component.html',
   styleUrls: ['./menu.component.css']
 })
+
 export class MenuComponent implements OnInit {
   isLoggedIn = false;
   isDropdownOpen = false;
   cartItemCount = 0;
   private router = inject(Router);
   private authService = inject(AuthService);
+
 
   ngOnInit() {
     this.checkAuthStatus();
@@ -53,7 +55,7 @@ export class MenuComponent implements OnInit {
   }
 
   navigateToCarrito() {
-    // this.router.navigate(['/carrito']);
+     this.router.navigate(['/carrito']);
   }
 
   cerrarSesion() {
