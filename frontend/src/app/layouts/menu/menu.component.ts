@@ -44,7 +44,7 @@ export class MenuComponent implements OnInit {
 
   navigateToMisCompras() {
     this.closeDropdown();
-    // this.router.navigate(['/mis-compras']);
+    this.router.navigate(['/mis-compras']);
   }
 
   navigateToMiPerfil() {
