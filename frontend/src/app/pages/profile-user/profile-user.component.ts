@@ -3,6 +3,8 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { AuthService } from '../../services/auth/auth.service';
 import { UserDTO } from '../../../types/UserDTO';
+import { Router } from '@angular/router';
+
 
 @Component({
   selector: 'app-perfil-usuario',
@@ -13,6 +15,7 @@ import { UserDTO } from '../../../types/UserDTO';
 })
 export class PerfilUsuarioComponent implements OnInit {
   private authService = inject(AuthService);
+  private router = inject(Router);
 
   user: UserDTO = {
     username: '',
@@ -29,6 +32,13 @@ export class PerfilUsuarioComponent implements OnInit {
   isLoading = false;
 
   ngOnInit(): void {
+
+    const userId = this.authService.getUserId();
+  if (!userId) {
+    this.router.navigate(['/login']);
+    return;
+  }
+
     this.authService.getProfile().subscribe({
       next: (data) => {
         this.user = { ...data, password: '' }; // Evita mostrar el password
@@ -99,4 +109,9 @@ export class PerfilUsuarioComponent implements OnInit {
     this.errorMessage = '';
     this.successMessage = '';
   }
+
+  volverAlInicio(): void {
+  this.router.navigate(['/']);
+}
+
 }
