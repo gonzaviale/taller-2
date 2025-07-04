@@ -106,3 +106,8 @@
     </ng-template>
   </div>
 </div>
+<!-- Message Notification -->
+@if (showMessage) {
+<app-message-notification [message]="message" [type]="messageType">
+</app-message-notification>
+}

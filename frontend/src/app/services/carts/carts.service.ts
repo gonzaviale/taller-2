@@ -13,7 +13,7 @@ import { HttpHeaders } from '@angular/common/http';
   providedIn: 'root'
 })
 export class CartsService {
-  
+
   http = inject(HttpClient);
   authService = inject(AuthService);
   apiUrl = environment.api_url;
@@ -76,53 +76,40 @@ export class CartsService {
   }
 
   clearCart(): void {
+    localStorage.removeItem(this.STORAGE_KEY);
     this.cart.products = [];
     this.cart.totalPrice = 0;
+   
   }
 
- createPurchaseRequeset(): void {
-  const userId = Number(this.authService.getUserId());
+  createPurchaseRequeset(): Observable<PurchaseDTO> {
 
-  if (!userId) {
-    console.error('❌ No se encontró el userId.');
-    return;
-  }
-
-  const purchaseRequest = this.mapCartToPurchaseRequest(this.cart, userId);
-
-  console.log('🛒 Enviando compra:', purchaseRequest);
-
-  this.createPurchase(purchaseRequest).subscribe({
-    next: (res) => {
-      console.log('✅ Compra creada con éxito:', res);
-      this.clearCart();
-    },
-    error: (err) => {
-      console.error('❌ Error al crear la compra:', err);
-      alert('Error al crear la compra: ' + (err.error?.message || err.message));
+    const userId = Number(this.authService.getUserId());
+    if (!userId) {
+      throw new Error('User ID is required to create a purchase');
     }
-  });
-}
 
+    const purchaseRequest = this.mapCartToPurchaseRequest(this.cart, userId);
+    return this.createPurchase(purchaseRequest);
+  }
 
   createPurchase(purchase: PurchaseRequest): Observable<PurchaseDTO> {
     const userId = Number(this.authService.getUserId());
-    
+
     if (!userId) {
       throw new Error('User ID is required to create a purchase');
     }
     const token = this.authService.getToken();
-    console.log(token);
     if (!token) {
       throw new Error('Authentication token is required to create a purchase');
     }
     purchase.userId = userId;
-    
+
     const headers = new HttpHeaders({
-    'Authorization': `Bearer ${token}`
-});
-  
-    return this.http.post<PurchaseDTO>(`${this.apiUrl}/purchase`, purchase,{ headers });
+      'Authorization': `Bearer ${token}`
+    });
+
+    return this.http.post<PurchaseDTO>(`${this.apiUrl}/purchase`, purchase, { headers });
   }
 
   updatePurchase(id: number, purchase: PurchaseDTO): Observable<PurchaseDTO> {
@@ -138,10 +125,12 @@ export class CartsService {
       userId: userId,
       products: cart.products,
       status: 'buying'
-      
+
     };
     return purchaseRequest;
 
   }
+
+
 
 }
