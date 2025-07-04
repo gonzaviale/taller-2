@@ -131,6 +131,16 @@ export class CartsService {
 
   }
 
+  getUserPurchases(): Observable<PurchaseDTO[]> {
+  const token = this.authService.getToken();
+  
+  const headers = new HttpHeaders({
+    Authorization: `Bearer ${token}`,
+  });
+
+  return this.http.get<PurchaseDTO[]>(`${this.apiUrl}/purchase/mis-compras`, { headers });
+
+}
 
 
 }

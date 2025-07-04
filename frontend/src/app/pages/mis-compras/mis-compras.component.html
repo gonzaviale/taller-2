@@ -1,1 +1,33 @@
-<p>mis-compras works!</p>
+<div class="max-w-4xl mx-auto p-6">
+      <a [routerLink]="['']"
+        class="flex items-center text-blue-600 hover:text-blue-800 transition-colors duration-200 font-medium">
+        ← Volver a productos
+      </a>
+  <h2 class="text-2xl font-semibold mb-6 text-center">Mis Compras</h2>
+
+  <div *ngIf="isLoading" class="text-center text-gray-500">Cargando compras...</div>
+  <div *ngIf="error" class="text-red-500 text-center">{{ error }}</div>
+
+  <div *ngFor="let compra of compras" class="bg-white shadow-md rounded-xl p-4 mb-6">
+    <div class="text-sm text-gray-500 font-medium mb-3">
+      {{ compra.createdAt | date: 'dd MMMM yyyy' }}
+    </div>
+
+    <div *ngFor="let producto of compra.Products" class="flex flex-col sm:flex-row items-center gap-4 border-t pt-4 mt-4">
+
+      <img
+        [src]="producto.image"
+        alt="Producto"
+        class="w-24 h-24 object-cover rounded-md border"
+        (error)="producto.image = 'default.jpg'"
+      />
+
+      <div class="flex-1 w-full">
+        <h3 class="text-lg font-medium text-gray-800">{{ producto.title }}</h3>
+        <p class="text-sm text-gray-600">{{ producto.description }}</p>
+        <p class="text-sm text-gray-700 mt-1">Cantidad: {{ producto.quantity || 1 }}</p>
+        <p class="text-sm text-gray-700">Precio: ${{ producto.price }}</p>
+      </div>
+    </div>
+  </div>
+</div>

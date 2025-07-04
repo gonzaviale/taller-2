@@ -1,7 +1,15 @@
-import { Request, Response } from "express";
+import { Request, Response, NextFunction  } from "express";
 import { createPurchaseService, getPurchaseService, getAllPurchasesService, updatePurchaseService, deletePurchaseService } from "../services/purchaseService";
 import { verifyToken } from "../utils/verifyToken";
 import { User } from "../models/User";
+import { Purchase } from "../models/Purchase";
+import { Product } from "../models/Product";
+import { RequestHandler } from "express";
+
+
+
+
+
 
 export const createPurchaseController = async (req: Request, res: Response) => {
   try {
@@ -77,3 +85,48 @@ export const deletePurchaseController = async (req: Request, res: Response) => {
     res.status(404).json({ message: error.message || error });
   }
 };
+
+export const getPurchasesByUserController = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> => {
+  try {
+    const authHeader = req.headers['authorization'];
+    const token = authHeader?.split(' ')[1];
+
+    if (!token) {
+      res.status(401).json({ message: 'Token no proporcionado' });
+      return;
+    }
+
+    const decoded = verifyToken(token);
+    const user = await User.findOne({ where: { username: decoded.username } });
+
+    if (!user || !user.id) {
+      res.status(404).json({ message: 'Usuario no encontrado o sin ID' });
+      return;
+    }
+
+    const purchases = await Purchase.findAll({
+      where: { userId: user.id },
+      include: [{
+        model: Product,
+        through: { attributes: ['quantity'] }
+      }],
+      order: [['createdAt', 'DESC']],
+    });
+
+    res.status(200).json(purchases);
+  } catch (error: any) {
+    res.status(500).json({ message: error.message || 'Error al obtener compras' });
+  }
+};
+
+
+
+    
+
+
+
+
