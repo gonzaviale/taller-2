@@ -116,6 +116,34 @@ export const updateUserService = async (
   }
 };
 
+
+export const getProfileService = async (id: number) => {
+  try {
+    const user = await sequelize.models.User.findByPk(id);
+    if (!user) throw new Error("User not found");
+
+    const userData = user.get({ plain: true });
+    return convertToUserResponseDTO(userData);
+  } catch (error: any) {
+    throw new Error("Error getting profile: " + (error.message || error));
+  }
+};
+
+export const updateProfileService = async (id: number, userDTO: UserRequestDTO) => {
+  try {
+    const user = await sequelize.models.User.findByPk(id);
+    if (!user) throw new Error("User not found");
+
+    Object.assign(user, userDTO);
+    await user.save();
+
+    return convertToUserResponseDTO(user.get({ plain: true }));
+  } catch (error: any) {
+    throw new Error("Error updating profile: " + (error.message || error));
+  }
+};
+
+
 export const deleteUserService = async (id: number) => {
   try {
     // Obtener el usuario por id

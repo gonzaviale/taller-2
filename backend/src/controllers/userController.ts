@@ -7,7 +7,14 @@ import {
   getUserService,
   updateUserService,
   loginService,
+  getProfileService,
+  updateProfileService,
 } from "../services/userService";
+import { OAuth2Client } from 'google-auth-library';
+import jwt from 'jsonwebtoken';
+import { sequelize } from '../config/db';
+
+const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
 export const loginController = async (req: Request, res: Response) => {
   try {
@@ -90,6 +97,83 @@ export const updateUserController = async (req: Request, res: Response) => {
     });
   }
 };
+
+export const loginWithGoogleController = async (req: Request, res: Response) => {
+  try {
+    const { idToken } = req.body;
+
+    const ticket = await client.verifyIdToken({
+      idToken,
+      audience: process.env.GOOGLE_CLIENT_ID,
+    });
+
+    const payload = ticket.getPayload();
+    if (!payload?.email) throw new Error('Email no disponible');
+
+    let user = await sequelize.models.User.findOne({
+      where: { email: payload.email },
+    });
+
+    if (!user) {
+      user = await sequelize.models.User.create({
+        email: payload.email,
+        username: payload.email.split('@')[0],
+        password: 'google_auth',
+        firstName: payload.given_name || '',
+        lastName: payload.family_name || '',
+        isActive: true,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      });
+    }
+
+    const userRaw = user.get({ plain: true });
+
+    const token = jwt.sign(
+      { username: userRaw.username },
+      process.env.JWT_SECRET || 'default',
+      { expiresIn: '24h' }
+    );
+
+    res.status(200).json({ userId: userRaw.id, token });
+
+  } catch (error: any) {
+    console.error('Login con Google Error:', error);
+    res.status(401).json({ message: 'Token inválido o error de autenticación' });
+  }
+};
+
+export const getProfileController = async (req: Request, res: Response) => {
+  try {
+    const userId = Number(req.params.id); 
+    if (isNaN(userId)) {
+      return res.status(400).json({ message: 'Invalid user ID' });
+    }
+
+    const profile = await getProfileService(userId);
+    res.status(200).json(profile);
+  } catch (error: any) {
+    res.status(404).json({ message: error.message || 'Error al obtener perfil' });
+  }
+};
+
+export const updateProfileController = async (req: Request, res: Response) => {
+  try {
+    const userId = Number(req.params.id);
+    const userDTO: UserRequestDTO = req.body;
+
+    if (isNaN(userId)) {
+      return res.status(400).json({ message: 'Invalid user ID' });
+    }
+
+    const updated = await updateProfileService(userId, userDTO);
+    res.status(200).json(updated);
+  } catch (error: any) {
+    res.status(400).json({ message: error.message || 'Error al actualizar perfil' });
+  }
+};
+
+
 
 export const deleteUserController = async (req: Request, res: Response) => {
   try {
