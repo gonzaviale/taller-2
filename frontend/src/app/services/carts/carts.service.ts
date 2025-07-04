@@ -1,30 +1,32 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { environment } from '../../../environments/environment.development';
-import { CartDTO, PurchaseDTO, PurchaseRequest, PurchaseResponse } from '../../../types/CartDTO';
+import { CartDTO, PurchaseDTO, PurchaseRequest, PurchaseResponse, StatusPurchase } from '../../../types/CartDTO';
 import { Observable, of } from 'rxjs';
 import { AuthService } from '../auth/auth.service';
 import { ProductDTO } from '../../../../../backend/src/types/DTO';
+import { Purchase } from '../../../../../backend/src/models/Purchase';
+import { HttpHeaders } from '@angular/common/http';
+
 
 @Injectable({
   providedIn: 'root'
 })
 export class CartsService {
-
-
+  
   http = inject(HttpClient);
   authService = inject(AuthService);
   apiUrl = environment.api_url;
   private readonly STORAGE_KEY = 'miCarrito';
 
   constructor() {
-    
+
     const savedCart = localStorage.getItem(this.STORAGE_KEY);
     if (savedCart) {
       this.cart = JSON.parse(savedCart);
     }
-    
-}
+
+  }
 
   // crear un carrito singleton para que no se pierda al refrescar la pagina
   private cart: CartDTO = {
@@ -78,17 +80,49 @@ export class CartsService {
     this.cart.totalPrice = 0;
   }
 
+ createPurchaseRequeset(): void {
+  const userId = Number(this.authService.getUserId());
+
+  if (!userId) {
+    console.error('❌ No se encontró el userId.');
+    return;
+  }
+
+  const purchaseRequest = this.mapCartToPurchaseRequest(this.cart, userId);
+
+  console.log('🛒 Enviando compra:', purchaseRequest);
+
+  this.createPurchase(purchaseRequest).subscribe({
+    next: (res) => {
+      console.log('✅ Compra creada con éxito:', res);
+      this.clearCart();
+    },
+    error: (err) => {
+      console.error('❌ Error al crear la compra:', err);
+      alert('Error al crear la compra: ' + (err.error?.message || err.message));
+    }
+  });
+}
+
+
   createPurchase(purchase: PurchaseRequest): Observable<PurchaseDTO> {
     const userId = Number(this.authService.getUserId());
+    
     if (!userId) {
       throw new Error('User ID is required to create a purchase');
     }
     const token = this.authService.getToken();
+    console.log(token);
     if (!token) {
       throw new Error('Authentication token is required to create a purchase');
     }
     purchase.userId = userId;
-    return this.http.post<PurchaseDTO>(`${this.apiUrl}/purchase`, purchase);
+    
+    const headers = new HttpHeaders({
+    'Authorization': `Bearer ${token}`
+});
+  
+    return this.http.post<PurchaseDTO>(`${this.apiUrl}/purchase`, purchase,{ headers });
   }
 
   updatePurchase(id: number, purchase: PurchaseDTO): Observable<PurchaseDTO> {
@@ -98,4 +132,16 @@ export class CartsService {
   deleteCart(id: number): Observable<PurchaseDTO> {
     return this.http.delete<PurchaseDTO>(`${this.apiUrl}/purchase/${id}`);
   }
+
+  mapCartToPurchaseRequest(cart: CartDTO, userId: number): PurchaseRequest {
+    const purchaseRequest: PurchaseRequest = {
+      userId: userId,
+      products: cart.products,
+      status: 'buying'
+      
+    };
+    return purchaseRequest;
+
+  }
+
 }

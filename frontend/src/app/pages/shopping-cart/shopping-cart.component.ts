@@ -45,7 +45,7 @@ export class ShoppingCartComponent implements OnInit{
   }
 
   finalizarCompra(){
-    
+    this.carritoService.createPurchaseRequeset();
   }
 
 actualizarCantidad(productId: number, cambio: number): void {

@@ -24,6 +24,7 @@ export const createPurchaseService = async (
             status: "buying",
             total,
         });
+        console.log('[Service] Compra creada:', newPurchase?.toJSON?.());
 
         // Asociar los productos a la compra
         const purchaseProducts = products.map((product) => ({
