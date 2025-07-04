@@ -4,6 +4,8 @@ import { AuthService } from '../../services/auth/auth.service';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 
+declare const google: any;
+
 @Component({
   selector: 'app-login',
   imports: [CommonModule,FormsModule],
@@ -23,7 +25,34 @@ export class LoginComponent implements OnInit {
     // Si el usuario ya está autenticado, redirigir al home
     if (this.authService.isAuthenticated()) {
       this.router.navigate(['/']);
+      return
     }
+
+    google.accounts.id.initialize({
+  client_id: '506891827052-sose28np6qcbn07lfsdsoav4329si5j3.apps.googleusercontent.com',
+  callback: (response: any) => this.onGoogleCredentialReceived(response.credential),
+});
+
+
+  google.accounts.id.renderButton(
+    document.getElementById('googleSignInDiv'),
+    { theme: 'outline', size: 'large' }
+  );
+}
+
+  onGoogleCredentialReceived(idToken: string): void {
+    this.authService.loginWithGoogle(idToken).subscribe({
+      next: (response) => {
+        this.authService.setUserId(response.userId);
+        this.authService.setToken(response.token);
+        this.router.navigate(['/']);
+    },
+      error: (error) => {
+        console.error('Login con Google falló:', error);
+        this.errorMessage = 'Error al iniciar sesión con Google.';
+    }
+  });
+
   }
 
   onLogin(): void {

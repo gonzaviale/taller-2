@@ -1,0 +1,46 @@
+<div class="max-w-2xl mx-auto mt-10 p-8 bg-white rounded-2xl shadow-xl space-y-6">
+  <h2 class="text-2xl font-semibold text-gray-800 text-center">Mi Perfil</h2>
+
+  <div *ngIf="errorMessage" class="text-red-600 text-sm text-center">{{ errorMessage }}</div>
+  <div *ngIf="successMessage" class="text-green-600 text-sm text-center">{{ successMessage }}</div>
+
+  <form (ngSubmit)="onUpdate()" class="space-y-4" #profileForm="ngForm">
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <input type="text" [(ngModel)]="user.firstName" name="firstName" placeholder="Nombre"
+        class="border p-2 rounded-xl w-full" required />
+
+      <input type="text" [(ngModel)]="user.lastName" name="lastName" placeholder="Apellido"
+        class="border p-2 rounded-xl w-full" required />
+    </div>
+
+    <input type="email" [(ngModel)]="user.email" name="email" placeholder="Correo electrónico"
+      class="border p-2 rounded-xl w-full" required />
+
+    <input type="text" [(ngModel)]="user.address" name="address" placeholder="Dirección"
+      class="border p-2 rounded-xl w-full" />
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <input type="password" [(ngModel)]="user.password" name="password" placeholder="Nueva contraseña"
+        class="border p-2 rounded-xl w-full" />
+
+      <input type="password" [(ngModel)]="confirmPassword" name="confirmPassword" placeholder="Confirmar contraseña"
+        class="border p-2 rounded-xl w-full" />
+    </div>
+
+  <div class="flex justify-end gap-4 mt-6">
+  <button
+    class="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-all"
+    (click)="volverAlInicio()">
+    Volver al inicio
+  </button>
+
+  <button
+    class="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-all"
+    (click)="onUpdate()"
+  >
+    Guardar Cambios
+  </button>
+  </div>
+  
+  </form>
+</div>
