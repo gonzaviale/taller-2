@@ -46,12 +46,12 @@ export class MenuComponent implements OnInit {
 
   navigateToMisCompras() {
     this.closeDropdown();
-    // this.router.navigate(['/mis-compras']);
+    this.router.navigate(['/mis-compras']);
   }
 
   navigateToMiPerfil() {
     this.closeDropdown();
-    // this.router.navigate(['/mi-perfil']);
+    this.router.navigate(['/perfil']);
   }
 
   navigateToCarrito() {

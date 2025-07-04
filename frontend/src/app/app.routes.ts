@@ -16,9 +16,20 @@ export const routes: Routes = [
         loadComponent: () => import('./pages/shopping-cart/shopping-cart.component').then(m => m.ShoppingCartComponent)
     },
     {
+    path: 'perfil',
+    loadComponent: () =>
+      import('./pages/profile-user/profile-user.component').then(m => m.PerfilUsuarioComponent)
+    },
+    {
+    path: 'mis-compras',
+    loadComponent: () =>
+      import('./pages/mis-compras/mis-compras.component').then(m => m.MisComprasComponent)
+    },
+    {
         path: '',
         component: HomeComponent,
         loadChildren: () => import('./modules/products/pages/products.routes').then(m => m.routes)
+        
     },
     {
         path: '**',
