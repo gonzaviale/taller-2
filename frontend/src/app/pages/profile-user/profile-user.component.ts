@@ -4,12 +4,13 @@ import { FormsModule } from '@angular/forms';
 import { AuthService } from '../../services/auth/auth.service';
 import { UserDTO } from '../../../types/UserDTO';
 import { Router } from '@angular/router';
+import { MenuComponent } from '../../layouts/menu/menu.component';
 
 
 @Component({
   selector: 'app-perfil-usuario',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule ,MenuComponent],
   templateUrl: './profile-user.component.html',
   styleUrl: './profile-user.component.css' // o .scss
 })
