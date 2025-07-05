@@ -134,20 +134,14 @@ export const deletePurchaseService = async (id: number) => {
     }
 }
 export const getAllPurchasesByUserIdService = async (
-  userId: number,
-  page: number,
-  limit: number,
+ userId: number,
   status: string | null
 ) => {
-  const offset = (page - 1) * limit;
-
   const { count, rows } = await Purchase.findAndCountAll({
     where: {
       userId,
       ...(status && { status }),
     },
-    offset,
-    limit,
     include: [
       {
         model: Product,
@@ -160,8 +154,6 @@ export const getAllPurchasesByUserIdService = async (
   return {
     purchases: rows,
     totalItems: count,
-    currentPage: page,
-    totalPages: Math.ceil(count / limit),
   };
 };
 

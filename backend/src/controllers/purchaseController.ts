@@ -117,12 +117,10 @@ export const getPurchasesByUserController = async (
       return;
     }
 
-    // Parámetros de paginación fijos (podés tomar de req.query si querés)
-    const page = 1;
-    const limit = 10;
+  
     const status = null;
 
-    const purchases = await getAllPurchasesByUserIdService(userId, page, limit, status);
+    const purchases = await getAllPurchasesByUserIdService(userId, status);
 
     res.status(200).json({ success: true, data: purchases });
   } catch (error) {
