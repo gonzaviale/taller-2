@@ -2,7 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { environment } from '../../../environments/environment.development';
 import { CartDTO, PurchaseDTO, PurchaseRequest, PurchaseResponse, StatusPurchase } from '../../../types/CartDTO';
-import { Observable, of } from 'rxjs';
+import { map, Observable, of } from 'rxjs';
 import { AuthService } from '../auth/auth.service';
 import { ProductDTO } from '../../../../../backend/src/types/DTO';
 import { Purchase } from '../../../../../backend/src/models/Purchase';
@@ -158,19 +158,26 @@ createPurchaseRequeset(): Observable<PurchaseDTO> {
   }
 
   getUserPurchases(): Observable<PurchaseResponse> {
-    const token = this.authService.getToken();
+  const token = this.authService.getToken();
+  const currentUserId = this.getCurrentUserId();
 
-    const headers = new HttpHeaders({
-      Authorization: `Bearer ${token}`,
-    });
+  const headers = new HttpHeaders({
+    Authorization: `Bearer ${token}`,
+  });
 
-    return this.http.get<PurchaseResponse>(
-      'http://localhost:3000/api/purchase',
-      { headers }
-    )
-
-
-  }
-
+  return this.http.get<PurchaseResponse>(`${this.apiUrl}/purchase`, { headers }).pipe(
+    map((response: PurchaseResponse) => {
+      const filteredPurchases = response.purchases.filter(p => p.userId === currentUserId);
+      return {
+        ...response,
+        purchases: filteredPurchases,
+        totalItems: filteredPurchases.length,
+        // Si no usás paginación, podés setear:
+        currentPage: 1,
+        totalPages: 1,
+      };
+    })
+  );
+}
 
 }
