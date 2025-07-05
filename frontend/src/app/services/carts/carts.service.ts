@@ -89,6 +89,10 @@ export class CartsService {
     if (!userId) {
       throw new Error('User ID is required to create a purchase');
     }
+      if (!this.cart || this.cart.totalPrice === 0) {
+    throw new Error('Cart is empty. Cannot create a purchase.');
+   }
+
 
     const purchaseRequest = this.mapCartToPurchaseRequest(this.cart, userId);
     return this.createPurchase(purchaseRequest);
