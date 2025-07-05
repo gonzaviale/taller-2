@@ -78,17 +78,19 @@
     Total: ${{ cart.totalPrice | number:'1.2-2' }}
   </div>
 
-  <div class="flex gap-3">
-    <button (click)="vaciarCarrito()"
-            class="bg-red-100 hover:bg-red-200 text-red-700 px-4 py-2 rounded-lg text-sm font-medium transition">
-      🗑️ Vaciar Carrito
-    </button>
+  <div class="flex gap-3 justify-end pt-6 border-t mt-6">
+  <button (click)="vaciarCarrito()"
+          class="px-6 py-3 bg-gradient-to-r from-gray-400 to-gray-600 text-white rounded-xl hover:shadow-lg transition-transform transform hover:scale-105 font-semibold">
+    🗑️ Vaciar Carrito
+  </button>
 
-    <button (click)="finalizarCompra()"
-     class="bg-green-600 hover:bg-emerald-600 text-white px-5 py-3 rounded-lg text-base font-semibold transition">
-      🛍️ Finalizar Compra
-    </button>
-  </div>
+  <button (click)="finalizarCompra()"
+          class="px-6 py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl hover:shadow-lg transition-transform transform hover:scale-105 font-semibold">
+    🛍️ Finalizar Compra
+  </button>
+</div>
+
+
 </div>
     </div>
 

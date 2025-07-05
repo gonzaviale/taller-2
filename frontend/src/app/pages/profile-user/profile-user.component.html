@@ -1,6 +1,11 @@
 <app-menu></app-menu>
 <div class="min-h-screen bg-gray-50 py-8">
   <div class="max-w-4xl mx-auto px-4">
+    <button 
+              (click)="volverAlInicio()"
+              class="flex items-center text-blue-600 hover:text-blue-800 transition-colors duration-200 font-medium">
+              ← Volver a productos
+            </button>
     <!-- Encabezado -->
     <div class="mb-8 text-center">
       <h2 class="text-3xl font-bold text-gray-900">Mi Perfil</h2>
@@ -88,14 +93,7 @@
 
         <!-- Acciones -->
         <div class="flex justify-end gap-4 pt-6 border-t mt-6">
-          <button
-            type="button"
-            (click)="volverAlInicio()"
-            class="px-6 py-3 bg-gray-100 text-gray-700 rounded-xl hover:bg-gray-200 transition-all">
-            Volver al inicio
-          </button>
-
-          <button
+         <button
             type="submit"
             class="px-6 py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl hover:shadow-lg transition-transform transform hover:scale-105 font-semibold">
             Guardar Cambios
