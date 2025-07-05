@@ -9,6 +9,7 @@ import { Purchase } from '../../../../../backend/src/models/Purchase';
 import { HttpHeaders } from '@angular/common/http';
 
 
+
 @Injectable({
   providedIn: 'root'
 })
@@ -131,14 +132,18 @@ export class CartsService {
 
   }
 
-  getUserPurchases(): Observable<PurchaseDTO[]> {
+  getUserPurchases(): Observable<PurchaseResponse> {
   const token = this.authService.getToken();
   
   const headers = new HttpHeaders({
     Authorization: `Bearer ${token}`,
   });
 
-  return this.http.get<PurchaseDTO[]>(`${this.apiUrl}/purchase/mis-compras`, { headers });
+    return this.http.get<PurchaseResponse>(
+    'http://localhost:3000/api/purchase',
+    { headers }
+  )
+ 
 
 }
 

@@ -132,4 +132,38 @@ export const deletePurchaseService = async (id: number) => {
     } catch (error: any) {
         throw new Error("Error deleting purchase: " + error.message || error);
     }
+}
+export const getAllPurchasesByUserIdService = async (
+  userId: number,
+  page: number,
+  limit: number,
+  status: string | null
+) => {
+  const offset = (page - 1) * limit;
+
+  const { count, rows } = await Purchase.findAndCountAll({
+    where: {
+      userId,
+      ...(status && { status }),
+    },
+    offset,
+    limit,
+    include: [
+      {
+        model: Product,
+        through: { attributes: ["quantity"] },
+      },
+    ],
+    order: [["createdAt", "DESC"]],
+  });
+
+  return {
+    purchases: rows,
+    totalItems: count,
+    currentPage: page,
+    totalPages: Math.ceil(count / limit),
+  };
 };
+
+
+

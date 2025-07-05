@@ -5,6 +5,8 @@ import {
     updatePurchaseController,
     deletePurchaseController,
     getPurchasesByUserController,
+    
+
 } from "../controllers/purchaseController";
 
 
@@ -172,6 +174,11 @@ cartRouter.delete("/:id", deletePurchaseController);
  *         description: No autorizado
  */
 
-cartRouter.get('/mis-compras', getPurchasesByUserController);
+cartRouter.get("", getPurchasesByUserController);
+
+
+
+
+
 
 export default cartRouter;

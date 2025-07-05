@@ -4,7 +4,7 @@ export interface PurchaseDTO {
     id?: number;
     userId: number;
     status: StatusPurchase;
-    totalPrice?: number;
+    total?: number;
     createdAt?: Date;
     updatedAt?: Date;
     Products?: ProductCartDTO[];
@@ -17,7 +17,7 @@ export interface PurchaseRequest {
 }
 
 export interface PurchaseResponse {
-    carts: PurchaseDTO[];
+    purchases: PurchaseDTO[];
     totalItems: number;
     currentPage: number;
     totalPages: number;
