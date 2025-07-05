@@ -6,8 +6,9 @@ import { ProductDTO, ProductoCarrito } from '../../../types/ProductDTO';
 import { ProductUtils } from '../../modules/products/pages/list-products/components/shared/product.utils';
 import { CartsService } from '../../services/carts/carts.service';
 import { CartDTO } from '../../../types/CartDTO';
-import { RouterModule } from '@angular/router';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { MessageNotificationComponent } from '../../modules/products/pages/list-products/components/message-notification/message-notification.component';
+import { AuthService } from '../../services/auth/auth.service';
 
 @Component({
   selector: 'app-shopping-cart',
@@ -25,8 +26,17 @@ export class ShoppingCartComponent implements OnInit {
   messageType: 'success' | 'error' = 'success';
 
   carritoService = inject(CartsService);
+  private route = inject(ActivatedRoute);
+  private authService = inject(AuthService)
+  private router = inject(Router);
 
   ngOnInit(): void {
+    const userId = this.authService.getUserId();
+     if (!userId) {
+       this.router.navigate(['/login']); 
+    return;
+   
+  }
     this.loadCart();
   }
 
@@ -55,6 +65,7 @@ export class ShoppingCartComponent implements OnInit {
     this.carritoService.createPurchaseRequeset().subscribe({
       next: (res) => {
         this.carritoService.clearCart();
+        this.loadCart();
         this.showMessageToUser('Compra realizada con éxito', 'success');
       },
       error: (err) => {

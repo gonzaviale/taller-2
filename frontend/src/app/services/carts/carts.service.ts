@@ -18,85 +18,106 @@ export class CartsService {
   http = inject(HttpClient);
   authService = inject(AuthService);
   apiUrl = environment.api_url;
-  private readonly STORAGE_KEY = 'miCarrito';
+  
 
   constructor() {
 
-    const savedCart = localStorage.getItem(this.STORAGE_KEY);
-    if (savedCart) {
-      this.cart = JSON.parse(savedCart);
-    }
-
+  
   }
 
   // crear un carrito singleton para que no se pierda al refrescar la pagina
+
+
   private cart: CartDTO = {
     products: [],
     totalPrice: 0
   }
 
-  getCart(): Observable<CartDTO> {
-    return of(this.cart);
+private cartsByUserId: Record<number, CartDTO> = {};
+
+
+
+getCart(): Observable<CartDTO> {
+  try {
+    const cart = this.getCurrentCart(); // ya obtiene carrito solo para userId actual
+    return of(cart);
+  } catch (error) {
+    // En caso de que no haya userId (usuario no autenticado)
+    return of({ products: [], totalPrice: 0 });
+  }
+}
+
+private getCurrentUserId(): number {
+  const userId = Number(this.authService.getUserId());
+  if (!userId) throw new Error('Usuario no autenticado');
+  return userId;
+}
+
+private getCurrentCart(): CartDTO {
+  const userId = this.getCurrentUserId();
+  if (!this.cartsByUserId[userId]) {
+    this.cartsByUserId[userId] = { products: [], totalPrice: 0 };
+  }
+  return this.cartsByUserId[userId];
+}
+
+addToCart(product: CartDTO['products'][number]): void {
+  const cart = this.getCurrentCart();
+  const existingProduct = cart.products.find(p => p.id === product.id);
+  if (existingProduct) {
+    existingProduct.quantity += product.quantity;
+  } else {
+    cart.products.push(product);
+  }
+  this.updateTotalPrice(cart);
+}
+
+cambiarCantidad(productId: number, cambio: number): void {
+  const cart = this.getCurrentCart();
+  const producto = cart.products.find(p => p.id === productId);
+  if (!producto) return;
+
+  const nuevaCantidad = producto.quantity + cambio;
+  if (nuevaCantidad < 1) return;
+  producto.quantity = nuevaCantidad;
+
+  this.updateTotalPrice(cart);
+}
+
+removeFromCart(productId: number): void {
+  const cart = this.getCurrentCart();
+  cart.products = cart.products.filter(p => p.id !== productId);
+  this.updateTotalPrice(cart);
+}
+
+private updateTotalPrice(cart: CartDTO): void {
+  cart.totalPrice = cart.products.reduce((total, product) => {
+    return total + (product.price * product.quantity);
+  }, 0);
+}
+
+clearCart(): void {
+  const userId = this.getCurrentUserId();
+  delete this.cartsByUserId[userId];
+}
+
+createPurchaseRequeset(): Observable<PurchaseDTO> {
+  const userId = this.getCurrentUserId();
+  const cart = this.getCurrentCart();
+
+   if (!userId) {
+    throw new Error('usuario no autenticado.');
   }
 
-  addToCart(product: CartDTO['products'][number]): void {
-    const existingProduct = this.cart.products.find(p => p.id === product.id);
-    if (existingProduct) {
-      existingProduct.quantity += product.quantity;
-    } else {
-      this.cart.products.push(product);
-    }
-    this.updateTotalPrice();
-    localStorage.setItem(this.STORAGE_KEY, JSON.stringify(this.cart));
 
-  }
-
-  cambiarCantidad(productId: number, cambio: number): void {
-    const producto = this.cart.products.find(p => p.id === productId);
-    if (!producto) return;
-
-    const nuevaCantidad = producto.quantity + cambio;
-    // Evitar cantidades menores a 1
-    if (nuevaCantidad < 1) return;
-    producto.quantity = nuevaCantidad;
-
-    this.updateTotalPrice();
-    localStorage.setItem('miCarrito', JSON.stringify(this.cart));
-
-  }
-
-  removeFromCart(productId: number): void {
-    this.cart.products = this.cart.products.filter(p => p.id !== productId);
-    this.updateTotalPrice();
-  }
-
-  private updateTotalPrice(): void {
-    this.cart.totalPrice = this.cart.products.reduce((total, product) => {
-      return total + (product.price * product.quantity);
-    }, 0);
-  }
-
-  clearCart(): void {
-    localStorage.removeItem(this.STORAGE_KEY);
-    this.cart.products = [];
-    this.cart.totalPrice = 0;
-   
-  }
-
-  createPurchaseRequeset(): Observable<PurchaseDTO> {
-
-    const userId = Number(this.authService.getUserId());
-    if (!userId) {
-      throw new Error('User ID is required to create a purchase');
-    }
-      if (!this.cart || this.cart.totalPrice === 0) {
+  if (!cart || cart.totalPrice === 0) {
     throw new Error('Cart is empty. Cannot create a purchase.');
-   }
-
-
-    const purchaseRequest = this.mapCartToPurchaseRequest(this.cart, userId);
-    return this.createPurchase(purchaseRequest);
   }
+
+  const purchaseRequest = this.mapCartToPurchaseRequest(cart, userId);
+ 
+  return this.createPurchase(purchaseRequest);
+}
 
   createPurchase(purchase: PurchaseRequest): Observable<PurchaseDTO> {
     const userId = Number(this.authService.getUserId());
@@ -137,19 +158,19 @@ export class CartsService {
   }
 
   getUserPurchases(): Observable<PurchaseResponse> {
-  const token = this.authService.getToken();
-  
-  const headers = new HttpHeaders({
-    Authorization: `Bearer ${token}`,
-  });
+    const token = this.authService.getToken();
+
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${token}`,
+    });
 
     return this.http.get<PurchaseResponse>(
-    'http://localhost:3000/api/purchase',
-    { headers }
-  )
- 
+      'http://localhost:3000/api/purchase',
+      { headers }
+    )
 
-}
+
+  }
 
 
 }

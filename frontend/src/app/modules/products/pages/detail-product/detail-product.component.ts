@@ -7,11 +7,12 @@ import { ProductsService } from '../../../../services/products/products.service'
 import { ProductUtils } from '../list-products/components/shared/product.utils';
 import { MessageNotificationComponent } from '../list-products/components/message-notification/message-notification.component';
 import { CartsService } from '../../../../services/carts/carts.service';
-import { CartDTO,ProductCartDTO} from '../../../../../types/CartDTO';
+import { CartDTO, ProductCartDTO } from '../../../../../types/CartDTO';
+import { AuthService } from '../../../../services/auth/auth.service';
 
 @Component({
   selector: 'app-detail-product',
-  imports: [CommonModule,MessageNotificationComponent],
+  imports: [CommonModule, MessageNotificationComponent],
   templateUrl: './detail-product.component.html',
   styleUrl: './detail-product.component.css'
 })
@@ -19,7 +20,8 @@ export class DetailProductComponent {
   private route = inject(ActivatedRoute);
   private location = inject(Location);
   private productService = inject(ProductsService);
-  private CartService = inject(CartsService);
+  private cartService = inject(CartsService);
+  private authService = inject(AuthService);
 
   product: ProductDTO | null = null;
   quantity: number = 1;
@@ -43,7 +45,7 @@ export class DetailProductComponent {
       },
       error: (error) => {
         console.error('Error al cargar el producto:', error);
-        this.product = null; 
+        this.product = null;
       },
       complete: () => {
         console.log('Carga del producto completada');
@@ -79,11 +81,16 @@ export class DetailProductComponent {
 
   onAddToCart(product: ProductDTO) {
 
-     const cartProduct: ProductCartDTO = this.productDTOtoCartProductDTO(product);
-   
-    this.CartService.addToCart(cartProduct);
-    this.showMessageToUser(`${product.title} agregado al carrito`, 'success');
-    console.log(`Agregando ${this.quantity} unidades de ${product.title} al carrito`);
+    const cartProduct: ProductCartDTO = this.productDTOtoCartProductDTO(product);
+
+
+    if (this.authService.getUserId() != null) {
+      this.cartService.addToCart(cartProduct);
+      this.showMessageToUser(`${product.title} agregado al carrito`, 'success');
+    }else
+    {
+      this.showMessageToUser(`login requerido`, 'error');
+    }
   }
 
   private productDTOtoCartProductDTO(product: ProductDTO): ProductCartDTO {
@@ -100,7 +107,7 @@ export class DetailProductComponent {
 
   onBuyNow(product: ProductDTO) {
     /**@todo: agregar la logica */
-    console.log(`Comprando ${this.quantity} unidades de ${product.title}`);
+
   }
 
   onImageError(event: any) {
