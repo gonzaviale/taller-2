@@ -10,6 +10,9 @@ import { LoadingStateComponent } from './components/loading-state/loading-state.
 import { EmptyStateComponent } from './components/empty-state/empty-state.component';
 import { MessageNotificationComponent } from './components/message-notification/message-notification.component';
 import { ProductUtils } from './components/shared/product.utils';
+import { ProductCartDTO } from '../../../../../types/CartDTO';
+import { CartsService } from '../../../../services/carts/carts.service';
+import { AuthService } from '../../../../services/auth/auth.service';
 
 export interface FilterState {
   searchTerm: string;
@@ -53,6 +56,8 @@ export class ListProductsComponent implements OnInit {
   messageType: 'success' | 'error' = 'success';
 
   productService = inject(ProductsService);
+  cartService = inject(CartsService);
+  AuthService = inject (AuthService);
 
   ngOnInit(): void {
     // CARGA LOS FILTROS GUARDADOS EN LOCAL STORAGE
@@ -151,8 +156,15 @@ export class ListProductsComponent implements OnInit {
   }
 
   onAddToCart(product: ProductDTO): void {
-    console.log('Adding to cart:', product);
-    this.showMessageToUser(`${product.title} agregado al carrito`, 'success');
+
+    const cartProduct: ProductCartDTO = this.productDTOtoCartProductDTO(product);
+
+    if (this.authService.getUserId() != null) {
+      this.cartService.addToCart(cartProduct);
+      this.showMessageToUser(`${product.title} agregado al carrito`, 'success');
+    } else {
+      this.showMessageToUser(`login requerido para agregar al carrito`, 'error');
+    }
   }
 
   private showMessageToUser(message: string, type: 'success' | 'error'): void {
@@ -164,4 +176,18 @@ export class ListProductsComponent implements OnInit {
       this.showMessage = false;
     }, 3000);
   }
+
+
+  private productDTOtoCartProductDTO(product: ProductDTO): ProductCartDTO {
+    return {
+      id: product.id!,
+      title: product.title,
+      price: product.price,
+      description: product.description,
+      category: product.category,
+      image: product.image,
+      quantity: 1
+    };
+  }
+
 }
