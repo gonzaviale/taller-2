@@ -57,7 +57,7 @@ export class ListProductsComponent implements OnInit {
 
   productService = inject(ProductsService);
   cartService = inject(CartsService);
-  AuthService = inject (AuthService);
+  authService = inject (AuthService);
 
   ngOnInit(): void {
     // CARGA LOS FILTROS GUARDADOS EN LOCAL STORAGE
