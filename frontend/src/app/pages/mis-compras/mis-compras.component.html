@@ -1,1 +1,70 @@
-<p>mis-compras works!</p>
+<app-menu></app-menu>
+
+<div class="min-h-screen bg-gray-50 py-10 px-4">
+  <div class="max-w-6xl mx-auto">
+    
+    <!-- Botón volver -->
+    <div class="flex items-center mb-8">
+      <a [routerLink]="['']"
+         class="flex items-center text-blue-600 hover:text-blue-800 transition-colors duration-200 font-medium">
+        ← Volver a productos
+      </a>
+    </div>
+
+    <!-- Título -->
+    <h1 class="text-3xl font-bold text-gray-900 mb-10 text-center">Mis Compras</h1>
+
+    <!-- Estado de carga o error -->
+    <div *ngIf="isLoading" class="text-center text-gray-500 text-lg">Cargando compras...</div>
+    <div *ngIf="error" class="text-red-500 text-center text-lg">{{ error }}</div>
+
+    <!-- Compras -->
+    <div *ngIf="purchaseResponse">
+      <div *ngFor="let compra of purchaseResponse.purchases" class="bg-white rounded-2xl shadow-lg border border-gray-100 p-6 mb-6">
+
+        <!-- Header compra -->
+        <div class="flex flex-wrap justify-between items-center mb-4">
+          <div class="text-sm text-gray-500">Compra #{{ compra.id }}</div>
+          <div class="text-sm text-gray-500">
+            Fecha: {{ compra.createdAt | date: 'dd MMMM, HH:mm' }}
+          </div>
+        </div>
+
+        <!-- Estado y total -->
+        <div class="flex justify-between items-center border-b pb-4 mb-4">
+          <div class="text-sm">
+            Estado:
+            <span [ngClass]="{
+              'text-yellow-600': compra.status === 'buying',
+              'text-red-600': compra.status === 'cancelled',
+              'text-green-600': compra.status === 'purchased'
+            }" class="font-semibold capitalize">
+              {{ compra.status }}
+            </span>
+          </div>
+          <div class="text-lg font-bold text-gray-800">
+            Total: ${{ compra.total }}
+          </div>
+        </div>
+
+        <!-- Imágenes de productos -->
+        <div class="flex flex-wrap gap-4 justify-start">
+          <ng-container *ngFor="let producto of compra.Products">
+            <img
+              [src]="producto.image"
+              alt="Producto"
+              class="w-24 h-24 object-cover rounded-md border border-gray-300"
+              (error)="producto.image = 'default.jpg'"
+            />
+          </ng-container>
+        </div>
+      </div>
+    </div>
+
+    <!-- Sin compras -->
+    <div *ngIf="!isLoading && !error && (!purchaseResponse?.purchases)" class="text-center mt-20 text-gray-500 text-lg">
+      Actualmente no tienes compras realizadas.
+    </div>
+  </div>
+</div>
+

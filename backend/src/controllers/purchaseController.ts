@@ -1,16 +1,24 @@
-import { Request, Response } from "express";
-import { createPurchaseService, getPurchaseService, getAllPurchasesService, updatePurchaseService, deletePurchaseService } from "../services/purchaseService";
+import { Request, Response, NextFunction  } from "express";
+import { createPurchaseService, getPurchaseService, getAllPurchasesService, updatePurchaseService, deletePurchaseService ,getAllPurchasesByUserIdService} from "../services/purchaseService";
 import { verifyToken } from "../utils/verifyToken";
 import { User } from "../models/User";
+import { Purchase } from "../models/Purchase";
+import { Product } from "../models/Product";
+import { RequestHandler } from "express";
+
+
+
+
+
 
 export const createPurchaseController = async (req: Request, res: Response) => {
   try {
     const { userId, products } = req.body;
 
     const authHeader = req.headers['authorization'];
-    console.log('Authorization header:', authHeader);
+   
     const token = authHeader && authHeader.split(' ')[1];
-    console.log('Token:', token);
+  
     const { username } = verifyToken(token!);
 
     const user = await User.findOne({ where: { username } });
@@ -77,3 +85,51 @@ export const deletePurchaseController = async (req: Request, res: Response) => {
     res.status(404).json({ message: error.message || error });
   }
 };
+
+
+
+export const getPurchasesByUserController = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> => {
+  try {
+    const authHeader = req.headers.authorization;
+
+    if (!authHeader || !authHeader.startsWith("Bearer ")) {
+      res.status(401).json({ message: "Token no proporcionado" });
+      return;
+    }
+
+    const token = authHeader.split(" ")[1];
+
+    let payload: any;
+    try {
+      payload = verifyToken(token);
+    } catch {
+      res.status(401).json({ message: "Token inválido" });
+      return;
+    }
+
+    const userId = payload.id;
+    if (!userId) {
+      res.status(401).json({ message: "Token inválido, sin userId" });
+      return;
+    }
+
+  
+    const status = null;
+
+    const purchases = await getAllPurchasesByUserIdService(userId, status);
+
+    res.status(200).json({ success: true, data: purchases });
+  } catch (error) {
+    next(error);
+  }
+};
+
+    
+
+
+
+

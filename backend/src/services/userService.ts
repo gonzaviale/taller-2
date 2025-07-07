@@ -46,7 +46,7 @@ export const createUserService = async (userDTO: UserRequestDTO) => {
 
     return userResponse;
   } catch (error: any) {
-    throw new Error("Error creating user: " + error.message || error);
+    throw new Error('El email ya está en uso. Por favor, usa otro.' );
   }
 };
 

@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { ProductDTO } from '../../../../../../../types/ProductDTO';
 import { ProductUtils } from '../shared/product.utils';
 import { Router } from '@angular/router';
+import { CartsService } from '../../../../../../services/carts/carts.service';
 
 @Component({
   selector: 'app-product-list',
@@ -14,14 +15,15 @@ export class ProductListComponent {
   @Input() products: ProductDTO[] = [];
   @Output() addToCart = new EventEmitter<ProductDTO>();
   private router = inject(Router);
+  private CartsService = inject(CartsService);
 
   onAddToCart(product: ProductDTO, event?: Event) {
-    /**@todo: agregar logica */
+    this.addToCart.emit(product);
+
     if (event) {
       event.stopPropagation();
     }
 
-    console.log('Agregando al carrito:', product.title);
   }
 
   getCategoryDisplayName(category: string): string {

@@ -4,7 +4,12 @@ import {
     getAllPurchasesController,
     updatePurchaseController,
     deletePurchaseController,
+    getPurchasesByUserController,
+    
+
 } from "../controllers/purchaseController";
+
+
 
 import { Router } from "express";
 import { validatePurchase } from "../middleware/validatePurchase";
@@ -147,5 +152,33 @@ cartRouter.put("/:id", updatePurchaseController);
  *        description: Carrito no encontrado
  */
 cartRouter.delete("/:id", deletePurchaseController);
+
+/**
+ * @swagger
+ * /api/cart/mis-compras:
+ *   get:
+ *     summary: Obtener las compras del usuario autenticado
+ *     tags: [Purchases]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Lista de compras del usuario
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/PurchaseResponseDTO'
+ *       401:
+ *         description: No autorizado
+ */
+
+cartRouter.get("", getPurchasesByUserController);
+
+
+
+
+
 
 export default cartRouter;
