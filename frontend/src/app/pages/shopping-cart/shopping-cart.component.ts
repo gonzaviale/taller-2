@@ -57,6 +57,7 @@ export class ShoppingCartComponent implements OnInit {
 
   vaciarCarrito() {
     this.carritoService.clearCart();
+     this.loadCart();
     this.showMessageToUser('Carrito eliminado', 'success');
   }
 
