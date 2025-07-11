@@ -42,6 +42,7 @@ export class DetailProductComponent {
     this.productService.getProductById(id).subscribe({
       next: (product) => {
         this.product = product;
+        this.quantity;
       },
       error: (error) => {
         console.error('Error al cargar el producto:', error);
