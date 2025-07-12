@@ -14,7 +14,7 @@ export interface FilterState {
   selector: 'app-product-filters',
   imports: [CommonModule, FormsModule],
   templateUrl: './product-filters.component.html',
-  styleUrl: './product-filters.component.css'
+
 })
 export class ProductFiltersComponent {
   @Input() categories: string[] = [];
@@ -34,6 +34,9 @@ export class ProductFiltersComponent {
     sortBy: 'default'
   };
 
+  private searchTimeout: any;
+
+
   ngOnInit(): void {
     this.localFilterState = { ...this.filterState };
   }
@@ -42,8 +45,17 @@ export class ProductFiltersComponent {
     this.localFilterState = { ...this.filterState };
   }
 
-  onFilterChange(): void {
-    this.filtersChange.emit({ ...this.localFilterState });
+  onFilterChange(isSearch = false): void {
+    if (isSearch) {
+      if (this.searchTimeout) {
+        clearTimeout(this.searchTimeout);
+      }
+      this.searchTimeout = setTimeout(() => {
+        this.filtersChange.emit({ ...this.localFilterState });
+      }, 1000);
+    } else {
+      this.filtersChange.emit({ ...this.localFilterState });
+    }
   }
 
   onViewModeChange(mode: 'grid' | 'list'): void {

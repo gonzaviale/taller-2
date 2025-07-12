@@ -4,7 +4,6 @@ import { Component, EventEmitter, Input, Output } from '@angular/core';
   selector: 'app-empty-state',
   imports: [],
   templateUrl: './empty-state.component.html',
-  styleUrl: './empty-state.component.css'
 })
 export class EmptyStateComponent {
   @Input() type: 'no-results' | 'no-products' = 'no-results';

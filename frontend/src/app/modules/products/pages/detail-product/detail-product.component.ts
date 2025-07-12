@@ -14,7 +14,7 @@ import { AuthService } from '../../../../services/auth/auth.service';
   selector: 'app-detail-product',
   imports: [CommonModule, MessageNotificationComponent],
   templateUrl: './detail-product.component.html',
-  styleUrl: './detail-product.component.css'
+ 
 })
 export class DetailProductComponent {
   private route = inject(ActivatedRoute);

@@ -12,7 +12,6 @@ import { MenuComponent } from '../../layouts/menu/menu.component';
   standalone: true,
   imports: [CommonModule, FormsModule ,MenuComponent],
   templateUrl: './profile-user.component.html',
-  styleUrl: './profile-user.component.css' // o .scss
 })
 export class PerfilUsuarioComponent implements OnInit {
   private authService = inject(AuthService);

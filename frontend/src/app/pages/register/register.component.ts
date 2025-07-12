@@ -10,7 +10,6 @@ import { AuthService } from '../../services/auth/auth.service';
   standalone: true,
   imports: [CommonModule, FormsModule],
   templateUrl: './register.component.html',
-  styleUrl: './register.component.css'
 })
 export class RegisterComponent implements OnInit {
   private router = inject(Router);

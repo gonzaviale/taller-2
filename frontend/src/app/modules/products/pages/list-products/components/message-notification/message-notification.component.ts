@@ -4,7 +4,6 @@ import { Component, Input } from '@angular/core';
   selector: 'app-message-notification',
   imports: [],
   templateUrl: './message-notification.component.html',
-  styleUrl: './message-notification.component.css'
 })
 export class MessageNotificationComponent {
   @Input() message: string = '';

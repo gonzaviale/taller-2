@@ -8,34 +8,20 @@ import { ProductDTO } from '../../../../../backend/src/types/DTO';
 import { Purchase } from '../../../../../backend/src/models/Purchase';
 import { HttpHeaders } from '@angular/common/http';
 
-
-
 @Injectable({
   providedIn: 'root'
 })
+
+
 export class CartsService {
 
   http = inject(HttpClient);
   authService = inject(AuthService);
   apiUrl = environment.api_url;
 
-
-  constructor() {
-
-
-  }
-
-  // crear un carrito singleton para que no se pierda al refrescar la pagina
-
-
-  private cart: CartDTO = {
-    products: [],
-    totalPrice: 0
-  }
+  constructor() {}
 
   private cartsByUserId: Record<number, CartDTO> = {};
-
-
 
   getCart(): Observable<CartDTO> {
     try {

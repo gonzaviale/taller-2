@@ -35,7 +35,7 @@ export interface FilterState {
     MessageNotificationComponent
   ],
   templateUrl: './list-products.component.html',
-  styleUrl: './list-products.component.css'
+
 })
 export class ListProductsComponent implements OnInit {
   products: ProductDTO[] = [];

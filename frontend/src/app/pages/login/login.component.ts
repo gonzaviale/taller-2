@@ -11,9 +11,10 @@ declare const google: any;
   selector: 'app-login',
   imports: [CommonModule,FormsModule,RouterLink],
   templateUrl: './login.component.html',
-  styleUrl: './login.component.css'
 })
+
 export class LoginComponent implements OnInit {
+
   private router = inject(Router);
   private authService = inject(AuthService);
 
@@ -29,18 +30,20 @@ export class LoginComponent implements OnInit {
       return
     }
 
+    // Inicializa Google Sign-In
     google.accounts.id.initialize({
-  client_id: '506891827052-sose28np6qcbn07lfsdsoav4329si5j3.apps.googleusercontent.com',
-  callback: (response: any) => this.onGoogleCredentialReceived(response.credential),
+    client_id: '506891827052-sose28np6qcbn07lfsdsoav4329si5j3.apps.googleusercontent.com',
+    callback: (response: any) => this.onGoogleCredentialReceived(response.credential),
 });
 
-
+   // Renderiza el botón de Google en el HTML
   google.accounts.id.renderButton(
     document.getElementById('googleSignInDiv'),
     { theme: 'outline', size: 'large' }
   );
 }
 
+  // Toma el token de Google, lo mando al backend, si esta todo ok,  logueo al usuario y redirijo.
   onGoogleCredentialReceived(idToken: string): void {
     this.authService.loginWithGoogle(idToken).subscribe({
       next: (response) => {

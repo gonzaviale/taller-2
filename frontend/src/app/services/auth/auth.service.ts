@@ -24,8 +24,7 @@ export class AuthService {
   return this.http.post<UserResponseLoginDTO>(`${this.apiUrl}/user/login/google`, { idToken });
   }
   logout(): void {
-    localStorage.removeItem('userId');
-    localStorage.removeItem('token');
+    localStorage.clear();
   }
   register(user: UserDTO): Observable<any> {
     return this.http.post(`${this.apiUrl}/user`, user);

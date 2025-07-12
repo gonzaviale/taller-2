@@ -8,7 +8,6 @@ import { Router } from '@angular/router';
   selector: 'app-product-grid',
   imports: [CommonModule],
   templateUrl: './product-grid.component.html',
-  styleUrl: './product-grid.component.css'
 })
 export class ProductGridComponent {
   @Input() products: ProductDTO[] = [];

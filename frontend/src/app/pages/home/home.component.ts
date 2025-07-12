@@ -7,6 +7,5 @@ import { MenuComponent } from "../../layouts/menu/menu.component";
   standalone: true,
   imports: [RouterOutlet, MenuComponent],
   templateUrl: './home.component.html',
-  styleUrls: ['./home.component.css']
 })
 export class HomeComponent {}

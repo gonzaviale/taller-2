@@ -13,8 +13,7 @@ import { AuthService } from '../../services/auth/auth.service';
 @Component({
   selector: 'app-shopping-cart',
   imports: [MenuComponent, CommonModule, RouterModule, MessageNotificationComponent],
-  templateUrl: './shopping-cart.component.html',
-  styleUrl: './shopping-cart.component.css'
+  templateUrl: './shopping-cart.component.html'
 })
 export class ShoppingCartComponent implements OnInit {
   isLoading = false;
@@ -30,6 +29,8 @@ export class ShoppingCartComponent implements OnInit {
   private authService = inject(AuthService)
   private router = inject(Router);
 
+
+  // Al iniciar, verifica si el usuario esta logueado sino pal login
   ngOnInit(): void {
     const userId = this.authService.getUserId();
      if (!userId) {
@@ -37,9 +38,11 @@ export class ShoppingCartComponent implements OnInit {
     return;
    
   }
-    this.loadCart();
+    this.loadCart(); // Si está logueado carga el carrito desde el servicio
   }
 
+
+  //Carga el carrito del usuario desde el backend
   loadCart(): void {
     this.isLoading = true;
     this.carritoService.getCart().subscribe(cart => {
@@ -61,6 +64,7 @@ export class ShoppingCartComponent implements OnInit {
     this.showMessageToUser('Carrito eliminado', 'success');
   }
 
+  //Finaliza la compra generando la orden en el backend
   finalizarCompra() {
 
     this.carritoService.createPurchaseRequeset().subscribe({
@@ -101,6 +105,7 @@ export class ShoppingCartComponent implements OnInit {
     return ProductUtils.handleImageError(event);
   }
 
+  //Identificador único para ngFor
   trackByProductId(index: number, product: ProductDTO): number {
     return product.id || index;
   }
